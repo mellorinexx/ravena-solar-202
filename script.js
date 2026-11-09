@@ -63,21 +63,16 @@
     starsBox.appendChild(s);
   }
 
-  /* ---------- geometria (recalculada ao redimensionar) ---------- */
-  let W = 0, horizonY = 0, peakY = 0, sunSize = 0;
+  /* ---------- geometria: tudo relativo à largura da casa ---------- */
+  // o sol é filho de .house: nasce atrás da parede esquerda, passa por trás do
+  // telhado (aparecendo acima da cumeeira, como na referência) e se põe à direita
+  let W = 0, sunSize = 0;
   function measure() {
-    const hr = hero.getBoundingClientRect();
-    const houseR = house.getBoundingClientRect();
-    const houseTop = houseR.top - hr.top;
-    W = hr.width;
+    W = house.offsetWidth;
     sunSize = sun.offsetWidth;
-    // horizonte na base da casa: o sol nasce e se põe atrás dela
-    horizonY = houseR.bottom - hr.top - sunSize * 0.15;
-    // ponto mais alto do arco: no meio do céu livre acima do telhado
-    peakY = Math.max(sunSize * 0.5, houseTop * 0.45);
   }
   measure();
-  if ('ResizeObserver' in window) new ResizeObserver(measure).observe(hero);
+  if ('ResizeObserver' in window) new ResizeObserver(measure).observe(house);
   else window.addEventListener('resize', measure);
 
   /* ---------- desenho de um quadro ---------- */
@@ -90,9 +85,12 @@
     style.setProperty('--lights', smoothstep(0.72, 0.92, p).toFixed(3));
     style.setProperty('--sun-core', rgb(mixRGB(SUN_DAY, SUN_DUSK, smoothstep(0.55, 0.9, p))));
 
-    // trajetória em arco: esquerda → direita
-    const x = mix(0.05, 0.95, p) * W - sunSize / 2;
-    const y = horizonY - Math.sin(Math.PI * p) * (horizonY - peakY) - sunSize / 2;
+    // trajetória em arco por trás da casa: esquerda → direita
+    const x = mix(0.10, 0.90, p) * W - sunSize / 2;
+    // sobe rápido por trás da casa e corre num arco alto e achatado, com o
+    // miolo parcialmente escondido pelo telhado (como na referência)
+    const k = smooth(Math.min(1, Math.sin(Math.PI * p) * 2));
+    const y = (0.21 - 0.24 * k) * W - sunSize / 2;
     sun.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
     sun.style.opacity = sunOp.toFixed(3);
 
