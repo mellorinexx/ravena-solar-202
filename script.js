@@ -151,3 +151,186 @@
   frameAt(0);
   start();
 })();
+
+/* =========================================================
+   Seções depois da hero
+   - revelação ao rolar (.reveal → .is-visible)
+   - formulário de simulação com regra de qualificação
+   ========================================================= */
+(function () {
+  document.documentElement.classList.add('js');
+
+  /* ---------- revelação ao rolar ---------- */
+  const items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+    items.forEach((el) => io.observe(el));
+  } else {
+    items.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  /* ---------- simulação ---------- */
+  const form = document.getElementById('sim-form');
+  if (!form) return;
+
+  const MIN_BILL = 450;               // critério atual: conta acima de R$ 450
+  const MAX_FILE = 10 * 1024 * 1024;  // 10 MB
+
+  const f = {
+    nome: form.elements.nome,
+    whats: form.elements.whatsapp,
+    cidade: form.elements.cidade,
+    conta: form.elements.conta,
+    arquivo: form.elements.arquivo,
+  };
+  const submit = document.getElementById('sim-submit');
+  const qualify = document.getElementById('qualify-msg');
+  const fileText = document.getElementById('file-text');
+  const success = document.getElementById('sim-success');
+  const FILE_DEFAULT = fileText.textContent;
+
+  const digits = (s) => s.replace(/\D/g, '');
+
+  // "1.234,56" / "1234,5" / "780" → número
+  function parseMoney(s) {
+    const clean = s.replace(/[^\d,.]/g, '');
+    if (!clean) return NaN;
+    const normalized = clean.includes(',')
+      ? clean.replace(/\./g, '').replace(',', '.')
+      : clean.replace(/\.(?=\d{3}(\D|$))/g, '');
+    return parseFloat(normalized);
+  }
+
+  function setError(input, id, msg) {
+    document.getElementById(id).textContent = msg || '';
+    if (msg) {
+      input.setAttribute('aria-invalid', 'true');
+      input.setAttribute('aria-errormessage', id);
+    } else {
+      input.removeAttribute('aria-invalid');
+      input.removeAttribute('aria-errormessage');
+    }
+    return !msg;
+  }
+
+  /* máscara do WhatsApp: (15) 99999-9999 */
+  f.whats.addEventListener('input', () => {
+    const d = digits(f.whats.value).slice(0, 11);
+    let out = d;
+    if (d.length > 2) out = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length > 7) out = `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+    f.whats.value = out;
+  });
+
+  /* regra de qualificação: avaliada enquanto a pessoa digita */
+  function checkBill() {
+    const v = parseMoney(f.conta.value);
+    const below = !isNaN(v) && v <= MIN_BILL;
+    qualify.hidden = !below;
+    submit.disabled = below;
+    return { value: v, qualified: !isNaN(v) && v > MIN_BILL };
+  }
+  f.conta.addEventListener('input', () => {
+    f.conta.value = f.conta.value.replace(/[^\d,.]/g, '');
+    setError(f.conta, 'e-conta', '');
+    checkBill();
+  });
+
+  f.arquivo.addEventListener('change', () => {
+    const file = f.arquivo.files[0];
+    if (!file) { fileText.textContent = FILE_DEFAULT; setError(f.arquivo, 'e-arquivo', ''); return; }
+    const okType = file.type.startsWith('image/') || file.type === 'application/pdf';
+    if (!okType || file.size > MAX_FILE) {
+      f.arquivo.value = '';
+      fileText.textContent = FILE_DEFAULT;
+      setError(f.arquivo, 'e-arquivo', !okType ? 'Envie uma foto ou um arquivo PDF.' : 'O arquivo precisa ter até 10 MB.');
+      return;
+    }
+    setError(f.arquivo, 'e-arquivo', '');
+    fileText.textContent = file.name;
+  });
+
+  // limpa o erro do campo assim que a pessoa corrige
+  [['nome', 'e-nome'], ['whats', 'e-whats'], ['cidade', 'e-cidade']].forEach(([k, id]) => {
+    f[k].addEventListener('input', () => setError(f[k], id, ''));
+  });
+
+  function validate() {
+    const bill = checkBill();
+    const okNome = setError(f.nome, 'e-nome', f.nome.value.trim().length < 2 ? 'Informe o seu nome.' : '');
+    const nWhats = digits(f.whats.value).length;
+    const okWhats = setError(f.whats, 'e-whats', nWhats < 10 ? 'Informe um WhatsApp com DDD.' : '');
+    const okCidade = setError(f.cidade, 'e-cidade', f.cidade.value.trim().length < 2 ? 'Informe a sua cidade.' : '');
+    const okConta = setError(f.conta, 'e-conta', isNaN(bill.value) ? 'Informe o valor médio da sua conta de luz.' : '');
+    const first = [[okNome, f.nome], [okWhats, f.whats], [okCidade, f.cidade], [okConta, f.conta]].find(([ok]) => !ok);
+    if (first) first[1].focus();
+    return okNome && okWhats && okCidade && okConta && bill.qualified;
+  }
+
+  const sendError = document.getElementById('e-envio');
+  const submitLabel = submit.firstChild.textContent;
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    sendError.textContent = '';
+    if (!validate()) return;
+
+    submit.disabled = true;
+    submit.firstChild.textContent = 'Enviando… ';
+    try {
+      await sendLead();
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    } catch (err) {
+      console.error(err);
+      sendError.textContent = 'Não foi possível enviar agora. Confira sua conexão e tente de novo.';
+      submit.disabled = false;
+    } finally {
+      submit.firstChild.textContent = submitLabel;
+    }
+  });
+
+  /* ---------- envio: Google Apps Script → planilha + e-mail ----------
+     A URL fica no atributo data-endpoint do <form> (index.html).
+     Instalação: integracoes/LEIA-ME.md */
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(',')[1]);
+      r.onerror = () => reject(r.error);
+      r.readAsDataURL(file);
+    });
+  }
+
+  async function sendLead() {
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) throw new Error('Envio não configurado: preencha data-endpoint no formulário.');
+
+    const file = f.arquivo.files[0];
+    const payload = {
+      nome: f.nome.value.trim(),
+      whatsapp: digits(f.whats.value),
+      cidade: f.cidade.value.trim(),
+      conta: parseMoney(f.conta.value),
+      site: form.elements.site.value,   // campo-armadilha contra robôs
+      arquivo: file ? { nome: file.name, tipo: file.type, base64: await fileToBase64(file) } : null,
+    };
+
+    // text/plain evita o preflight de CORS, que o Apps Script não responde
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error('Apps Script recusou: ' + out.erro);
+  }
+})();
