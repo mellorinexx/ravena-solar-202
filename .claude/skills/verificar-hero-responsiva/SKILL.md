@@ -18,7 +18,9 @@ Esta verificação é **obrigatória** depois de qualquer alteração que afete 
 ## O que verificar em cada resolução
 
 0. **Regra principal, sem exceção:** ao abrir o site, **sem rolar**, a hero inteira cabe na primeira tela (abaixo do cabeçalho): o céu com o sol, a casa completa (telhado, paredes, janelas, chão), o título inteiro, a frase de apoio, o botão e a nota. Se o visitante precisa descer para ler o texto, ver a casa inteira ou chegar ao botão, a resolução **reprova**. Isso não é aviso: é problema.
-1. A hero inteira está visível e **centralizada** na tela: na horizontal (folgas esquerda e direita iguais) **e na vertical** (a casa fica no centro da área útil entre o cabeçalho e a base da tela, nunca encostada embaixo nem cortada).
+1. A hero inteira está visível, ocupa a largura toda e segue o layout certo para a largura:
+   - **≥ 900 px (laptop):** título grande alinhado à esquerda na coluna esquerda; casa à direita, com margem até a borda direita (≥ 16 px), sem invadir a coluna do texto. A casa fica no centro vertical da área útil.
+   - **< 900 px (tablet e celular):** texto em cima, centralizado; casa embaixo, centralizada. O conjunto texto + casa fica no centro vertical da área útil, nunca encostado embaixo nem cortado.
 2. Textos, imagens e elementos gráficos (casa, telhado, painéis, janelas, sol, chão) estão posicionados corretamente.
 3. Nada está cortado, sobreposto ou fora da área visível.
 4. O conteúdo mantém proporções e espaçamentos adequados.
@@ -45,7 +47,7 @@ Volte ao tamanho normal com `resize_window` `{preset: "desktop"}`.
 
 ### 4. Casos extras (rápidos, só se a alteração envolver animação ou tamanho de elementos)
 
-- Largura de transição: 960 px (janelas aparecem a partir daí) e 520 px (regras `max-width: 520px`). Rode o script nelas se mexeu nesses breakpoints.
+- Larguras de transição: 900 px (troca entre lado a lado e empilhado: rode em 899 e 900) e 700 px (regras de celular `max-width: 699px`). Rode o script nelas se mexeu nesses breakpoints.
 - `prefers-reduced-motion`: a cena deve ficar estática, de dia, sem erro. O script reporta `animacao.reduzirMovimento`.
 
 ## Critérios de aprovação
@@ -55,12 +57,12 @@ Uma resolução é **APROVADA** só se `problemas` vier vazio **e** a captura de
 Referências para o julgamento visual:
 
 - **Primeira tela:** altura da hero ≤ altura útil (tela − cabeçalho); base da casa, do botão e da nota acima da borda inferior da tela. Na captura, a casa e o botão aparecem inteiros sem rolar. Confirme com a captura **sem rolar a página**.
-- **Centralização:** folga esquerda = folga direita (±2 px); casa, parede e bloco de texto no mesmo eixo central; na vertical, o centro da casa fica a no máximo 20% da altura útil do centro da área útil, com folga mínima de 8 px embaixo e céu suficiente (≥ 60 px) para o sol.
-- **Texto:** título, frase de apoio, botão e nota em ordem vertical, sem tocar nas bordas da parede nem nas janelas.
+- **Posição e centralização:** a hero ocupa a largura toda (folgas esquerda e direita = 0 ±2 px). Lado a lado (≥ 900 px): texto à esquerda com `text-align: left`, casa à direita com margem ≥ 16 px até a borda e sem sobrepor o texto. Empilhado (< 900 px): texto e casa no eixo central (±2 px), texto com `text-align: center` e acima da casa. Na vertical, o centro do conteúdo (lado a lado: a casa; empilhado: texto + casa) fica a no máximo 20% da altura útil do centro da área útil, com folga mínima de 8 px embaixo e céu suficiente (≥ 60 px) acima do telhado para o sol.
+- **Texto:** título, frase de apoio, botão e nota em ordem vertical, sem tocar na casa nem nas janelas. No laptop o título é grande e preenche a coluna esquerda.
 - **Botão principal (CTA):** altura ≥ 44 px; no celular ocupa a largura do bloco; **sempre visível na primeira dobra**.
-- **Casa:** o telhado tem a mesma largura da casa e encaixa na parede sem fresta.
-- **Sol:** cruza o céu da esquerda para a direita, passa **atrás** da casa e nunca por cima do texto.
-- **Janelas:** aparecem só a partir de 960 px; nunca sobrepõem o texto.
+- **Casa:** ilustração em SVG (`.house`), redesenhada a partir da referência, nunca imagem anexada. Proporção preservada: o telhado fica dentro do desenho e encaixa nas paredes sem fresta.
+- **Sol:** cruza o céu da esquerda para a direita, acima do texto, passa **atrás** da casa e nunca por cima do texto.
+- **Janelas:** fazem parte da casa, acendem à noite e nunca sobrepõem o texto.
 - **Design:** texto em `#123A55`, fonte Helvetica Neue/Helvetica/Arial, títulos em negrito 700, laranja só como destaque (nada de laranja forte em fundo ou texto). Veja `DESIGN.md`.
 
 ## Relatório (obrigatório, após cada alteração)

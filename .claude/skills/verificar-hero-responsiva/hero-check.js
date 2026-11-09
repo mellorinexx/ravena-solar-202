@@ -58,19 +58,57 @@
       problemas.push(`${nome} extrapola os limites da hero (cortado pelo overflow:hidden).`);
   }
 
+  /* Layout da hero:
+   *  - lado a lado (>= 900px): texto à esquerda (text-align:left), casa à direita,
+   *    com margem até a borda direita e sem invadir a coluna do texto;
+   *  - empilhado (< 900px): texto em cima, centralizado; casa embaixo, centralizada.
+   */
+  const ladoALado = vw >= 900;
+  medidas.layout = ladoALado ? 'lado a lado (texto à esquerda, casa à direita)' : 'empilhado (texto em cima, casa embaixo)';
   const centroX = (el) => R(el).left + R(el).width / 2;
-  if (casa && Math.abs(centroX(casa) - (h.left + h.width / 2)) > T)
-    problemas.push(`Casa descentralizada em ${r1(centroX(casa) - (h.left + h.width / 2))}px em relação à hero.`);
-  if (copy && parede && Math.abs(centroX(copy) - centroX(parede)) > T)
-    problemas.push(`Bloco de texto descentralizado em ${r1(centroX(copy) - centroX(parede))}px em relação à parede.`);
-  if (telhado && casa && Math.abs(R(telhado).width - R(casa).width) > T)
-    problemas.push('Telhado não acompanha a largura da casa (proporção do SVG quebrada).');
+  const centroHero = h.left + h.width / 2;
+  // área do desenho da casa = viewBox do <svg> projetado na tela (o viewBox enquadra a casa;
+  // getBBox não serve porque inclui a sombra e o reflexo recortado dos painéis)
+  const desenho = casa && casa.viewBox && casa.viewBox.baseVal && casa.viewBox.baseVal.width ? (() => {
+    const vb = casa.viewBox.baseVal, b = R(casa);
+    const s = Math.min(b.width / vb.width, b.height / vb.height);
+    const w = vb.width * s, hh = vb.height * s;
+    const left = b.left + (b.width - w) / 2, top = b.top + (b.height - hh) / 2;
+    return { left, top, right: left + w, bottom: top + hh, width: w, height: hh };
+  })() : null;
+  if (desenho) medidas.desenhoCasa = { x: r1(desenho.left), y: r1(desenho.top), w: r1(desenho.width), h: r1(desenho.height) };
 
-  /* textos centralizados: cada linha de texto deve estar alinhada ao centro */
-  for (const nome of ['h1', 'lead', 'nota']) {
-    const el = alvos[nome];
-    if (el && getComputedStyle(el).textAlign !== 'center')
-      problemas.push(`${nome} não está com text-align:center.`);
+  if (ladoALado && casa && copy) {
+    const margemDir = h.right - (desenho || R(casa)).right;
+    medidas.margemDireitaCasaPx = r1(margemDir);
+    if (margemDir < 16) problemas.push(`Casa sem margem até a borda direita (${r1(margemDir)}px; mínimo 16px).`);
+    if (R(copy).left < h.left + 16 - T) problemas.push(`Texto sem margem até a borda esquerda (${r1(R(copy).left - h.left)}px).`);
+    if (centroX(copy) >= centroX(casa)) problemas.push('Texto não está à esquerda da casa.');
+    const invade = ['h1', 'lead', 'cta', 'nota'].some((n) => alvos[n] && R(alvos[n]).right > (desenho || R(casa)).left + T);
+    if (invade) problemas.push('Texto invade a área do desenho da casa.');
+    for (const nome of ['h1', 'lead', 'nota']) {
+      const el = alvos[nome];
+      if (el && !['left', 'start'].includes(getComputedStyle(el).textAlign))
+        problemas.push(`${nome} deveria estar alinhado à esquerda no layout lado a lado.`);
+    }
+  } else if (casa && copy) {
+    if (Math.abs(centroX(casa) - centroHero) > T)
+      problemas.push(`Casa descentralizada em ${r1(centroX(casa) - centroHero)}px em relação à hero.`);
+    if (Math.abs(centroX(copy) - centroHero) > T)
+      problemas.push(`Bloco de texto descentralizado em ${r1(centroX(copy) - centroHero)}px em relação à hero.`);
+    if (R(copy).bottom > (desenho || R(casa)).top + T)
+      problemas.push('Texto sobrepõe a casa (no layout empilhado o texto fica acima da casa).');
+    for (const nome of ['h1', 'lead', 'nota']) {
+      const el = alvos[nome];
+      if (el && getComputedStyle(el).textAlign !== 'center')
+        problemas.push(`${nome} não está com text-align:center no layout empilhado.`);
+    }
+  }
+  // telhado inteiro dentro do desenho da casa (proporção do SVG preservada)
+  if (telhado && desenho) {
+    const t = R(telhado);
+    if (t.left < desenho.left - T || t.right > desenho.right + T || t.top < desenho.top - T)
+      problemas.push('Telhado escapa do desenho da casa (proporção do SVG quebrada).');
   }
 
   /* ---------- 3. Cortes e sobreposições ---------- */
@@ -79,8 +117,6 @@
     if (el && el.scrollWidth > el.clientWidth + 1)
       problemas.push(`Texto de ${nome} estourando o próprio container (scrollWidth ${el.scrollWidth} > ${el.clientWidth}).`);
   }
-  if (parede && copy && (R(copy).right > R(parede).right - 4 || R(copy).left < R(parede).left + 4))
-    problemas.push('Bloco de texto encosta/ultrapassa a borda da parede.');
 
   // ordem vertical sem sobreposição: h1 → lead → cta → nota
   const ordem = ['h1', 'lead', 'cta', 'nota'].map((n) => alvos[n]).filter(Boolean);
@@ -88,7 +124,7 @@
     if (R(ordem[i]).bottom > R(ordem[i + 1]).top + 1)
       problemas.push(`Sobreposição vertical entre ${['h1', 'lead', 'cta', 'nota'][i]} e ${['h1', 'lead', 'cta', 'nota'][i + 1]}.`);
 
-  // janelas (só visíveis em telas largas) não podem tocar o texto
+  // janelas da casa não podem tocar o texto
   const janelas = [...document.querySelectorAll('.window')].filter(visivel);
   janelas.forEach((j) => {
     const a = R(j);
@@ -121,15 +157,17 @@
       problemas.push(`${nome} escondido atrás do cabeçalho fixo (topo em ${r1(r.top)}px, cabeçalho até ${r1(headerH)}px).`);
   }
 
-  // centralização vertical: a casa fica no centro da área útil (entre cabeçalho e base da tela)
+  // centralização vertical: o conteúdo (lado a lado: a casa; empilhado: texto + casa)
+  // fica no centro da área útil (entre cabeçalho e base da tela)
   if (casa) {
     const c = R(casa);
-    const centroCasa = c.top + c.height / 2;
+    const topo = ladoALado || !copy ? c.top : Math.min(c.top, R(copy).top);
+    const centroConteudo = (topo + c.bottom) / 2;
     const centroUtil = headerH + alturaUtil / 2;
-    const desvio = centroCasa - centroUtil;
-    medidas.centroVertical = { desvioPx: r1(desvio), limitePx: r1(alturaUtil * 0.2) };
+    const desvio = centroConteudo - centroUtil;
+    medidas.centroVertical = { referencia: ladoALado ? 'casa' : 'texto + casa', desvioPx: r1(desvio), limitePx: r1(alturaUtil * 0.2) };
     if (Math.abs(desvio) > alturaUtil * 0.2)
-      problemas.push(`Casa descentralizada na vertical: centro ${r1(Math.abs(desvio))}px ${desvio > 0 ? 'abaixo' : 'acima'} do centro da área útil (limite ${r1(alturaUtil * 0.2)}px).`);
+      problemas.push(`Conteúdo descentralizado na vertical (${medidas.centroVertical.referencia}): centro ${r1(Math.abs(desvio))}px ${desvio > 0 ? 'abaixo' : 'acima'} do centro da área útil (limite ${r1(alturaUtil * 0.2)}px).`);
     // respiro mínimo entre a casa e a base da tela (chão) e sobra de céu para o sol
     const folgaBase = vh - c.bottom, folgaTopo = c.top - headerH;
     medidas.folgas = { topoCeuPx: r1(folgaTopo), baseChaoPx: r1(folgaBase) };

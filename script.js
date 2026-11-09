@@ -1,19 +1,20 @@
 /* =========================================================
    Hero — ciclo do dia
-   O sol cruza o céu da esquerda para a direita e o fundo
-   escurece gradualmente até a noite; depois amanhece de novo.
+   O sol cruza o céu em arco, por cima do texto, da esquerda
+   para a direita; o fundo escurece até a noite e depois
+   amanhece de novo.
    ========================================================= */
 (function () {
   const hero = document.querySelector('.hero');
   if (!hero) return;
 
   const sun = hero.querySelector('.sun');
+  const copy = hero.querySelector('.hero-copy');
   const starsBox = hero.querySelector('.stars');
   const glint = hero.querySelector('.glint');
-  const house = hero.querySelector('.house');
 
   /* ---------- tempos (ms) ---------- */
-  const TRAVEL = 18000; // sol atravessando o céu
+  const TRAVEL = 16000; // sol atravessando o céu
   const NIGHT = 3500;   // noite parada
   const DAWN = 3000;    // amanhecer (volta ao dia)
   const CYCLE = TRAVEL + NIGHT + DAWN;
@@ -54,7 +55,7 @@
   /* ---------- estrelas ---------- */
   let seed = 7;
   const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-  for (let i = 0; i < 46; i++) {
+  for (let i = 0; i < 60; i++) {
     const s = document.createElement('span');
     s.className = 'star' + (rand() > 0.82 ? ' is-big' : '');
     s.style.left = (rand() * 100).toFixed(2) + '%';
@@ -63,70 +64,78 @@
     starsBox.appendChild(s);
   }
 
-  /* ---------- geometria: tudo relativo à largura da casa ---------- */
-  // o sol é filho de .house: nasce atrás da parede esquerda, passa por trás do
-  // telhado (aparecendo acima da cumeeira, como na referência) e se põe à direita
-  let W = 0, sunSize = 0;
+  /* ---------- geometria: arco relativo à hero e ao texto ---------- */
+  // o sol nasce na borda esquerda, sobe acima do título e se põe na borda
+  // direita passando atrás da casa; nunca desce até a altura do texto
+  let W = 0, S = 0, yBase = 0, yPeak = 0;
   function measure() {
-    W = house.offsetWidth;
-    sunSize = sun.offsetWidth;
+    W = hero.clientWidth;
+    S = sun.offsetWidth;
+    const copyTop = copy.offsetTop;
+    yBase = Math.max(S * 0.6, copyTop - S * 0.55);    // centro do sol no nascer/pôr
+    yPeak = Math.min(yBase, S * 0.5);                 // centro do sol no meio-dia
   }
   measure();
-  if ('ResizeObserver' in window) new ResizeObserver(measure).observe(house);
-  else window.addEventListener('resize', measure);
+  window.addEventListener('resize', measure);
+  window.addEventListener('load', measure);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(measure);
+    ro.observe(hero);
+    ro.observe(copy);
+  }
 
   /* ---------- desenho de um quadro ---------- */
   const style = hero.style;
-  function render(p, sky, starOp, sunOp) {
+  function render(p, sky, starOp, sunOp, night) {
     style.setProperty('--sky-top', rgb(sky.top));
     style.setProperty('--sky-bottom', rgb(sky.bottom));
-    style.setProperty('--sunp', p.toFixed(4));
     style.setProperty('--stars', starOp.toFixed(3));
-    style.setProperty('--lights', smoothstep(0.72, 0.92, p).toFixed(3));
+    style.setProperty('--panel', (0.92 * night).toFixed(3));
+    style.setProperty('--lights', night.toFixed(3));
     style.setProperty('--sun-core', rgb(mixRGB(SUN_DAY, SUN_DUSK, smoothstep(0.55, 0.9, p))));
 
-    // trajetória em arco por trás da casa: esquerda → direita
-    const x = mix(0.10, 0.90, p) * W - sunSize / 2;
-    // sobe rápido por trás da casa e corre num arco alto e achatado, com o
-    // miolo parcialmente escondido pelo telhado (como na referência)
-    const k = smooth(Math.min(1, Math.sin(Math.PI * p) * 2));
-    const y = (0.21 - 0.24 * k) * W - sunSize / 2;
-    sun.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    const cx = mix(-0.04, 1.04, p) * W;
+    const cy = mix(yBase, yPeak, Math.sin(Math.PI * p));
+    sun.style.transform = `translate3d(${(cx - S / 2).toFixed(1)}px, ${(cy - S / 2).toFixed(1)}px, 0)`;
     sun.style.opacity = sunOp.toFixed(3);
+  }
 
-    // reflexo nos painéis acompanha o sol
-    glint.setAttribute('x', mix(60, 900, p).toFixed(1));
-    glint.style.opacity = (1 - smoothstep(0.55, 0.8, p)).toFixed(3);
+  /* reflexo que varre os painéis solares durante o dia */
+  const GLINT = 6000;
+  function glintAt(time, day) {
+    if (!glint) return;
+    const g = (time % GLINT) / GLINT;
+    glint.setAttribute('x', (-200 + g * 1500).toFixed(0));
+    glint.setAttribute('opacity', (0.22 * day).toFixed(3));
   }
 
   function frameAt(time) {
     const t = time % CYCLE;
+    glintAt(time, t < TRAVEL ? 1 - smoothstep(0.55, 0.8, t / TRAVEL) : 0);
     if (t < TRAVEL) {
       const p = t / TRAVEL;
-      const sunOp = smoothstep(0, 0.04, p) * (1 - smoothstep(0.93, 1, p));
-      render(p, skyAt(p), smoothstep(0.74, 0.96, p), sunOp);
+      const sunOp = smoothstep(0, 0.06, p) * (1 - smoothstep(0.9, 1, p));
+      render(p, skyAt(p), smoothstep(0.74, 0.96, p), sunOp, smoothstep(0.55, 0.85, p));
     } else if (t < TRAVEL + NIGHT) {
-      render(1, skyAt(1), 1, 0);
+      render(1, skyAt(1), 1, 0, 1);
     } else {
-      // amanhecer: noite → manhã, sol reaparece à esquerda
+      // amanhecer: noite → manhã; o sol volta a nascer à esquerda
       const q = smooth((t - TRAVEL - NIGHT) / DAWN);
       const n = skyAt(1), d = skyAt(0);
       const sky = { top: mixRGB(n.top, d.top, q), bottom: mixRGB(n.bottom, d.bottom, q) };
-      render(0, sky, 1 - q, 0);
-      style.setProperty('--lights', (1 - q).toFixed(3));
-      glint.style.opacity = q.toFixed(3);
+      render(0, sky, 1 - q, 0, 1 - q);
     }
   }
 
   /* ---------- movimento reduzido: cena estática de dia ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   if (reduce.matches) {
-    render(0.32, skyAt(0.32), 0, 1);
+    render(0.5, skyAt(0.3), 0, 1, 0);
     return;
   }
 
   /* ---------- loop (pausa fora da tela) ---------- */
-  let elapsed = 0, last = null, running = true, raf = 0;
+  let elapsed = 0, last = null, raf = 0;
   function tick(now) {
     if (last !== null) elapsed += Math.min(now - last, 50);
     last = now;
@@ -137,7 +146,7 @@
   function stop() { cancelAnimationFrame(raf); raf = 0; }
 
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => { running = e.isIntersecting; running ? start() : stop(); }).observe(hero);
+    new IntersectionObserver(([e]) => { e.isIntersecting ? start() : stop(); }).observe(hero);
   }
   frameAt(0);
   start();

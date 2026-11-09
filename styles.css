@@ -20,9 +20,9 @@
   --sky-top: #FEF7EE;
   --sky-bottom: #FEF7EE;
   --stars: 0;
-  --lights: 0;
+  --panel: 0;
   --sun-core: #F2A03D;
-  --sunp: .3;
+  --lights: 0;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -67,37 +67,39 @@ body {
 .header-link:hover { background-size: 100% 6px; }
 
 /* ---------------- Hero ----------------
-   A casa é uma ilustração de proporção fixa (medida na imagem de referência).
-   --W = largura da casa: o maior valor que cabe na largura E na altura da tela.
-   Tudo dentro da casa é medido em cqw (1cqw = 1% da largura da casa),
-   então telhado, parede, janelas, texto, plantas, nuvens e sol escalam juntos.
-   ------------------------------------------------------------------------- */
-.svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
-
+   Texto grande à esquerda, casa ilustrada (SVG) à direita, com margem
+   até a borda. O sol cruza o céu em arco acima do texto e passa atrás
+   da casa; o fundo vai de dia para noite (script.js).
+   Texto sempre em #123A55: à noite um painel translúcido em
+   Laranja 50 ganha opacidade (--panel) para manter o contraste.
+   Em telas estreitas (< 900px) o texto fica em cima e a casa embaixo.
+   ------------------------------------------------------------- */
 .hero {
-  --W: min(880px, calc(100vw - 32px), calc((100svh - var(--header-h) - 40px) / .85));
+  --sky-pad: clamp(64px, 12svh, 120px);   /* céu livre acima do conteúdo para o sol */
   position: relative;
   isolation: isolate;
   overflow: hidden;
   height: calc(100svh - var(--header-h));
-  display: flex;
+  min-height: 520px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  grid-template-rows: minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  /* céu acima do telhado para o sol (17,5% da largura da casa) */
-  padding: calc(var(--W) * .175) 16px calc(var(--W) * .03 + 8px);
+  column-gap: clamp(24px, 3.5vw, 64px);
+  padding: var(--sky-pad) clamp(16px, 5vw, 80px) clamp(16px, 3svh, 32px);
 }
 
 .sky {
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 85%);
+  z-index: -2;
+  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 100%);
 }
 
 /* estrelas */
 .stars {
   position: absolute;
-  inset: 0 0 35% 0;
+  inset: 0;
   opacity: var(--stars);
 }
 .star {
@@ -114,40 +116,15 @@ body {
   to   { opacity: 1; }
 }
 
-/* ---------------- Casa ---------------- */
-.house {
-  position: relative;
-  width: var(--W);
-  container-type: inline-size;
-}
-
-/* nuvens (atrás da casa), nas posições da referência */
-.cloud {
-  position: absolute;
-  z-index: 0;
-  display: block;
-  fill: #fff;
-  opacity: calc(.95 - var(--stars) * .85);
-  animation: drift 34s ease-in-out infinite alternate;
-}
-.cloud--1 { left: 22.6cqw; top: -10.6cqw; width: 19cqw; }
-.cloud--2 { left: -11cqw;  top: 27.7cqw;  width: 12.8cqw; animation-duration: 42s; animation-delay: -12s; }
-.cloud--3 { left: 99cqw;   top: 9.4cqw;   width: 13.6cqw; animation-duration: 38s; animation-delay: -20s; }
-@keyframes drift {
-  from { transform: translateX(-2cqw); }
-  to   { transform: translateX(2cqw); }
-}
-
-/* sol: sempre atrás do telhado e das paredes */
+/* sol: posição e opacidade definidas pelo script */
 .sun {
   position: absolute;
-  z-index: 0;
+  z-index: -1;
   top: 0;
   left: 0;
-  width: 35cqw;
+  width: clamp(64px, 12vmin, 140px);
   aspect-ratio: 1;
   will-change: transform, opacity;
-  /* transform/opacity definidos pelo script */
   transform: translate(-300px, -300px);
 }
 .sun svg { width: 100%; height: 100%; display: block; overflow: visible; }
@@ -159,103 +136,49 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.house-shadow {
-  position: absolute;
-  left: -11cqw;
-  right: -12cqw;
-  bottom: -2.2cqw;
-  height: 4.4cqw;
-  background: radial-gradient(closest-side, rgba(18, 58, 85, .16), rgba(18, 58, 85, 0));
-  opacity: calc(1 - var(--stars) * .8);
-}
-
-/* telhado: mesma largura da casa */
-.roof {
-  position: relative;
-  z-index: 2;
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  margin-bottom: -1px; /* encaixa o beiral na parede */
-}
-.roof-face { fill: var(--burnt); }
-.roof-tiles { fill: none; stroke: #C2560F; stroke-width: 2; opacity: .45; }
-.gable { fill: #ECE2D5; }
-.panel-shadow { fill: #9C4610; opacity: .3; }
-.panels polygon {
-  fill: url(#panelGrad);
-  stroke: #FFFFFF;
-  stroke-width: 3.5;
-  stroke-linejoin: round;
-}
-.panel-cells { fill: none; stroke: #A9CBE6; stroke-width: 1.2; opacity: .45; }
-.glint { transform: skewX(-24deg); }
-.roof-ridge { stroke: var(--navy); stroke-width: 6; stroke-linecap: round; }
-.fascia { fill: var(--navy); }
-.roof-rake { stroke: var(--navy); stroke-width: 12; stroke-linecap: round; }
-.gable-edge { stroke: var(--navy); stroke-width: 5; }
-
-/* corpo: fachada (texto) + parede lateral — proporção da referência */
-.house-body {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  margin-left: 3.4cqw;
-  width: 93.8cqw;
-  /* altura da referência; cresce só se o texto precisar */
-  min-height: 40.2cqw;
-}
-
-.wall {
-  position: relative;
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--o50);
-  border-left: max(3px, .5cqw) solid var(--navy);
-  border-bottom: max(3px, .5cqw) solid var(--navy);
-  border-right: 2px solid rgba(18, 58, 85, .16);
-  padding: 2.4cqw 2cqw 2.6cqw;
-  text-align: center;
-}
-
-.side-wall {
-  position: relative;
-  flex: 0 0 7.7%;
-  background: linear-gradient(to bottom, #E2D6C6, #ECE2D5 30%);
-  border-right: max(3px, .5cqw) solid var(--navy);
-  border-bottom: max(3px, .5cqw) solid var(--navy);
-}
-.vent {
-  position: absolute;
-  top: 12%;
-  left: 30%;
-  width: 34%;
-  aspect-ratio: 3 / 4;
-  border-radius: 2px;
-  background: rgba(18, 58, 85, .2);
-  box-shadow: inset 0 0 0 2px rgba(18, 58, 85, .25);
-}
-
+/* texto (coluna esquerda) */
 .hero-copy {
   position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 50cqw;
-  margin: 0 auto;
+  max-width: 640px;
+  margin-left: calc(-1 * clamp(14px, 1.6vw, 28px));   /* o painel noturno não desloca o texto */
+  padding: clamp(14px, 1.6vw, 28px);
+  border-radius: 28px;
+  text-align: left;
+  background: rgba(254, 247, 238, var(--panel));
+  box-shadow: 0 18px 50px rgba(11, 38, 56, calc(var(--panel) * .35));
+  -webkit-backdrop-filter: blur(calc(var(--panel) * 10px));
+  backdrop-filter: blur(calc(var(--panel) * 10px));
 }
 
-/* tipografia: Helvetica (DESIGN.md), 700 nos títulos, letras com respiro */
+/* casa (coluna direita): ocupa a altura disponível sem distorcer */
+.hero-art {
+  align-self: stretch;
+  min-height: 0;
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.house {
+  display: block;
+  width: min(100cqw, calc(100cqh * 1190 / 1100));
+  height: auto;
+  aspect-ratio: 1190 / 1100;
+  overflow: visible;
+}
+/* luzes das janelas acendem à noite (--lights, script.js) */
+.house .lit { opacity: var(--lights); }
+.house .window { filter: drop-shadow(0 0 calc(var(--lights) * 14px) rgba(242, 160, 61, calc(var(--lights) * .9))); }
+
+/* tipografia: Helvetica (DESIGN.md), 700 nos títulos */
 .hero h1 {
-  margin: 0 0 1.5cqw;
-  font-size: 4.25cqw;
-  line-height: 1.2;
+  margin: 0 0 .45em;
+  /* cresce com a largura e a altura: tablet em pé ganha título maior */
+  font-size: clamp(2rem, calc(3.3vw + 2.4svh), 5rem);
+  line-height: 1.08;
   font-weight: 700;
-  letter-spacing: .01em;
-  word-spacing: .04em;
+  letter-spacing: .005em;
+  text-wrap: balance;
 }
 .hero h1 mark {
   color: inherit;
@@ -265,10 +188,9 @@ body {
 }
 
 .hero-lead {
-  margin: 0 0 2.4cqw;
-  font-size: max(14px, 2.15cqw);
-  line-height: 1.38;
-  letter-spacing: .005em;
+  margin: 0 0 1.3em;
+  font-size: clamp(1.05rem, calc(1vw + 1svh), 1.6rem);
+  line-height: 1.4;
 }
 .hero-lead strong { font-weight: 700; }
 
@@ -276,18 +198,18 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 1.2cqw;
-  min-height: max(46px, 6cqw);
-  padding: 1cqw 4.6cqw;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 34px;
   border-radius: 999px;
   background: var(--sun);
   color: var(--navy);
   font-weight: 700;
-  font-size: max(15px, 2.3cqw);
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
   letter-spacing: .01em;
   text-decoration: none;
   white-space: nowrap;
-  box-shadow: 0 .5cqw 0 -.1cqw var(--burnt);
+  box-shadow: 0 5px 0 -1px var(--burnt);
   transition: transform .2s ease, box-shadow .2s ease;
 }
 .btn-primary svg {
@@ -309,94 +231,39 @@ body {
 }
 
 .hero-note {
-  margin: 1.4cqw -10cqw 0;
-  font-size: max(14px, 1.6cqw);
+  margin: 1.1em 0 0;
+  font-size: .95rem;
   line-height: 1.35;
-  letter-spacing: .005em;
-}
-
-/* janelas: simétricas na fachada, ao lado do título */
-.window {
-  position: absolute;
-  top: 5.6cqw;
-  width: 14.3cqw;
-  aspect-ratio: 160 / 172;
-}
-.window svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  /* brilho quente quando a luz acende */
-  filter: drop-shadow(0 0 calc(var(--lights) * 2cqw) rgba(242, 160, 61, calc(var(--lights) * .75)));
-}
-.window--left  { left: 1.6cqw; }
-.window--right { right: 1.6cqw; }
-.win-frame { fill: var(--navy); }
-.win-shadow { fill: var(--navy); opacity: .12; }
-.win-lit { opacity: var(--lights); }
-/* reflexo grande no vidro: desliza acompanhando o sol */
-.win-refl {
-  transform: translateX(calc((var(--sunp) - .5) * 40px));
-  opacity: calc(1 - var(--lights) * .45);
-}
-
-/* plantas: posições e tamanhos da referência, balançando com vento lento */
-.bush {
-  position: absolute;
-  z-index: 3;
-  height: auto;
-  overflow: visible;
-  filter: brightness(calc(1 - var(--stars) * .4));
-}
-.bush--left  { left: -8.1cqw; bottom: -.8cqw; width: 21.3cqw; }
-.bush--right { left: 84.3cqw; bottom: -.8cqw; width: 26.4cqw; }
-
-.leaf {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: sway 6.5s ease-in-out infinite alternate;
-}
-.leaf--1 { animation-delay: -1.2s; animation-duration: 7.2s; }
-.leaf--2 { animation-delay: -2.6s; }
-.leaf--3 { animation-delay: -3.4s; animation-duration: 7.8s; }
-.leaf--4 { animation-delay: -4.8s; }
-.leaf--5 { animation-delay: -0.6s; animation-duration: 8.4s; }
-.bush--right .leaf { animation-direction: alternate-reverse; }
-
-.bush-crown {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: crown 9s ease-in-out infinite alternate;
-}
-.bush--right .bush-crown { animation-delay: -4s; }
-
-@keyframes sway {
-  from { transform: rotate(-5deg); }
-  to   { transform: rotate(5deg); }
-}
-@keyframes crown {
-  from { transform: skewX(-2deg); }
-  to   { transform: skewX(2deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .leaf, .bush-crown, .cloud, .sun-rays, .star { animation: none; }
+  .sun-rays, .star { animation: none; }
 }
 
-/* ---------- celular: a fachada cresce na altura para o texto caber legível ---------- */
+/* ---------- tablet e celular: texto em cima, casa embaixo ---------- */
+@media (max-width: 899px) {
+  .hero {
+    --sky-pad: clamp(64px, 11svh, 120px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    row-gap: clamp(8px, 2svh, 24px);
+    padding-inline: 16px;
+  }
+  .hero-copy {
+    justify-self: center;
+    margin-left: 0;
+    max-width: 640px;
+    text-align: center;
+  }
+  .hero h1 { font-size: clamp(1.65rem, calc(3vw + 1.6svh), 3rem); line-height: 1.12; }
+  .hero-lead { font-size: clamp(1rem, 2.2vw, 1.25rem); text-wrap: balance; }
+  .hero-art { justify-content: center; }
+}
+
+/* ---------- celular ---------- */
 @media (max-width: 699px) {
   .brand img { height: 36px; }
   .header-link { font-size: .875rem; }
-  .br-d { display: none; }
-  .window { display: none; }
-  .house-body { min-height: 0; }
-  .wall { padding: 28px 16px 21cqw; }
-  .hero-copy { max-width: none; }
-  .hero h1 { font-size: clamp(1.45rem, 6.6vw, 1.9rem); margin-bottom: .5em; text-wrap: balance; }
-  .hero-lead { font-size: 1rem; margin-bottom: 1.2em; text-wrap: balance; }
-  .btn-primary { width: 100%; padding: 14px 16px; font-size: 1rem; gap: 10px; box-shadow: 0 5px 0 -2px var(--burnt); }
-  .hero-note { font-size: .9rem; margin: 1em 0 0; text-wrap: balance; }
-  .bush--left  { left: -4cqw; width: 24cqw; }
-  .bush--right { left: 80cqw; width: 26cqw; }
+  .btn-primary { width: 100%; padding: 14px 16px; }
+  .hero-note { font-size: .9rem; text-wrap: balance; }
 }
