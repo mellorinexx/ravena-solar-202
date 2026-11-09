@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ravena Solar · Energia solar residencial em Sorocaba</title>
+  <meta name="description" content="Sistemas fotovoltaicos conectados à rede para residências em Sorocaba e região. Faça uma simulação.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand" href="#topo" aria-label="Ravena Solar, início">
+      <img src="logo.svg" alt="Ravena Solar" width="180" height="48">
+    </a>
+    <a class="header-link" href="#simulacao">Fazer simulação</a>
+  </header>
+
+  <!-- gradientes compartilhados pelas janelas -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="glassDay" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#FCDFA0"/><stop offset="1" stop-color="#F6B655"/>
+      </linearGradient>
+      <linearGradient id="glassNight" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#F2A03D"/>
+      </linearGradient>
+      <clipPath id="glassClip"><rect x="24" y="16" width="112" height="124"/></clipPath>
+    </defs>
+  </svg>
+
+  <main id="topo">
+    <!-- ============ HERO ============ -->
+    <section class="hero" aria-labelledby="hero-title">
+
+      <!-- Céu: cor controlada pelo script (dia → noite) -->
+      <div class="sky" aria-hidden="true">
+        <div class="stars"></div>
+
+        <svg class="cloud cloud--1" viewBox="0 0 200 90"><path d="M42 84a28 28 0 0 1 6-55 40 40 0 0 1 72-12 32 32 0 0 1 50 26 22 22 0 0 1-2 41Z"/></svg>
+        <svg class="cloud cloud--2" viewBox="0 0 200 90"><path d="M42 84a28 28 0 0 1 6-55 40 40 0 0 1 72-12 32 32 0 0 1 50 26 22 22 0 0 1-2 41Z"/></svg>
+        <svg class="cloud cloud--3" viewBox="0 0 200 90"><path d="M42 84a28 28 0 0 1 6-55 40 40 0 0 1 72-12 32 32 0 0 1 50 26 22 22 0 0 1-2 41Z"/></svg>
+
+        <div class="sun">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="sunGlow">
+                <stop offset="0" stop-color="#F2A03D" stop-opacity=".35"/>
+                <stop offset="1" stop-color="#F2A03D" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="sunShade" cx=".38" cy=".35" r=".75">
+                <stop offset="0" stop-color="#fff" stop-opacity=".28"/>
+                <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="100" fill="url(#sunGlow)"/>
+            <g class="sun-rays" stroke-width="10" stroke-linecap="round">
+              <line x1="162" y1="100" x2="188" y2="100"/>
+              <line x1="153.7" y1="131" x2="176.2" y2="144"/>
+              <line x1="131" y1="153.7" x2="144" y2="176.2"/>
+              <line x1="100" y1="162" x2="100" y2="188"/>
+              <line x1="69" y1="153.7" x2="56" y2="176.2"/>
+              <line x1="46.3" y1="131" x2="23.8" y2="144"/>
+              <line x1="38" y1="100" x2="12" y2="100"/>
+              <line x1="46.3" y1="69" x2="23.8" y2="56"/>
+              <line x1="69" y1="46.3" x2="56" y2="23.8"/>
+              <line x1="100" y1="38" x2="100" y2="12"/>
+              <line x1="131" y1="46.3" x2="144" y2="23.8"/>
+              <line x1="153.7" y1="69" x2="176.2" y2="56"/>
+            </g>
+            <circle class="sun-core" cx="100" cy="100" r="46"/>
+            <circle cx="100" cy="100" r="46" fill="url(#sunShade)"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Casa -->
+      <div class="house">
+        <div class="house-shadow" aria-hidden="true"></div>
+
+        <svg class="roof" viewBox="0 0 1000 222" aria-hidden="true">
+          <defs>
+            <clipPath id="roofClip"><polygon points="172,36 889,34 902,206 6,206"/></clipPath>
+            <clipPath id="panelClip"><polygon points="150,56 836,56 781.1,178 95.1,178"/></clipPath>
+            <linearGradient id="panelGrad" x1="0" y1="0" x2=".35" y2="1">
+              <stop offset="0" stop-color="#2E6C9C"/><stop offset="1" stop-color="#174A72"/>
+            </linearGradient>
+            <linearGradient id="glintGrad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+              <stop offset=".5" stop-color="#fff" stop-opacity=".5"/>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polygon class="gable" points="889,36 978,206 978,222 902,222"/>
+          <polygon class="roof-face" points="172,36 889,34 902,206 6,206"/>
+          <path class="roof-tiles" clip-path="url(#roofClip)" d="M0 60H1000M-40 36l-5.4 24M6 36l-5.4 24M52 36l-5.4 24M98 36l-5.4 24M144 36l-5.4 24M190 36l-5.4 24M236 36l-5.4 24M282 36l-5.4 24M328 36l-5.4 24M374 36l-5.4 24M420 36l-5.4 24M466 36l-5.4 24M512 36l-5.4 24M558 36l-5.4 24M604 36l-5.4 24M650 36l-5.4 24M696 36l-5.4 24M742 36l-5.4 24M788 36l-5.4 24M834 36l-5.4 24M880 36l-5.4 24M926 36l-5.4 24M972 36l-5.4 24M0 84H1000M-17 60l-5.4 24M29 60l-5.4 24M75 60l-5.4 24M121 60l-5.4 24M167 60l-5.4 24M213 60l-5.4 24M259 60l-5.4 24M305 60l-5.4 24M351 60l-5.4 24M397 60l-5.4 24M443 60l-5.4 24M489 60l-5.4 24M535 60l-5.4 24M581 60l-5.4 24M627 60l-5.4 24M673 60l-5.4 24M719 60l-5.4 24M765 60l-5.4 24M811 60l-5.4 24M857 60l-5.4 24M903 60l-5.4 24M949 60l-5.4 24M995 60l-5.4 24M0 108H1000M-40 84l-5.4 24M6 84l-5.4 24M52 84l-5.4 24M98 84l-5.4 24M144 84l-5.4 24M190 84l-5.4 24M236 84l-5.4 24M282 84l-5.4 24M328 84l-5.4 24M374 84l-5.4 24M420 84l-5.4 24M466 84l-5.4 24M512 84l-5.4 24M558 84l-5.4 24M604 84l-5.4 24M650 84l-5.4 24M696 84l-5.4 24M742 84l-5.4 24M788 84l-5.4 24M834 84l-5.4 24M880 84l-5.4 24M926 84l-5.4 24M972 84l-5.4 24M0 132H1000M-17 108l-5.4 24M29 108l-5.4 24M75 108l-5.4 24M121 108l-5.4 24M167 108l-5.4 24M213 108l-5.4 24M259 108l-5.4 24M305 108l-5.4 24M351 108l-5.4 24M397 108l-5.4 24M443 108l-5.4 24M489 108l-5.4 24M535 108l-5.4 24M581 108l-5.4 24M627 108l-5.4 24M673 108l-5.4 24M719 108l-5.4 24M765 108l-5.4 24M811 108l-5.4 24M857 108l-5.4 24M903 108l-5.4 24M949 108l-5.4 24M995 108l-5.4 24M0 156H1000M-40 132l-5.4 24M6 132l-5.4 24M52 132l-5.4 24M98 132l-5.4 24M144 132l-5.4 24M190 132l-5.4 24M236 132l-5.4 24M282 132l-5.4 24M328 132l-5.4 24M374 132l-5.4 24M420 132l-5.4 24M466 132l-5.4 24M512 132l-5.4 24M558 132l-5.4 24M604 132l-5.4 24M650 132l-5.4 24M696 132l-5.4 24M742 132l-5.4 24M788 132l-5.4 24M834 132l-5.4 24M880 132l-5.4 24M926 132l-5.4 24M972 132l-5.4 24M0 180H1000M-17 156l-5.4 24M29 156l-5.4 24M75 156l-5.4 24M121 156l-5.4 24M167 156l-5.4 24M213 156l-5.4 24M259 156l-5.4 24M305 156l-5.4 24M351 156l-5.4 24M397 156l-5.4 24M443 156l-5.4 24M489 156l-5.4 24M535 156l-5.4 24M581 156l-5.4 24M627 156l-5.4 24M673 156l-5.4 24M719 156l-5.4 24M765 156l-5.4 24M811 156l-5.4 24M857 156l-5.4 24M903 156l-5.4 24M949 156l-5.4 24M995 156l-5.4 24M0 204H1000M-40 180l-5.4 24M6 180l-5.4 24M52 180l-5.4 24M98 180l-5.4 24M144 180l-5.4 24M190 180l-5.4 24M236 180l-5.4 24M282 180l-5.4 24M328 180l-5.4 24M374 180l-5.4 24M420 180l-5.4 24M466 180l-5.4 24M512 180l-5.4 24M558 180l-5.4 24M604 180l-5.4 24M650 180l-5.4 24M696 180l-5.4 24M742 180l-5.4 24M788 180l-5.4 24M834 180l-5.4 24M880 180l-5.4 24M926 180l-5.4 24M972 180l-5.4 24"/>
+          <g class="panel-shadow"><polygon points="154,61 320.5,61 294.6,118.5 128.1,118.5"/><polygon points="330.5,61 492,61 466.1,118.5 304.6,118.5"/><polygon points="502,61 663.5,61 637.6,118.5 476.1,118.5"/><polygon points="673.5,61 840,61 814.1,118.5 647.6,118.5"/><polygon points="125,125.5 291.5,125.5 265.6,183 99.1,183"/><polygon points="301.5,125.5 463,125.5 437.1,183 275.6,183"/><polygon points="473,125.5 634.5,125.5 608.6,183 447.1,183"/><polygon points="644.5,125.5 811,125.5 785.1,183 618.6,183"/></g>
+          <g class="panels"><polygon points="150,56 316.5,56 290.6,113.5 124.1,113.5"/><polygon points="326.5,56 488,56 462.1,113.5 300.6,113.5"/><polygon points="498,56 659.5,56 633.6,113.5 472.1,113.5"/><polygon points="669.5,56 836,56 810.1,113.5 643.6,113.5"/><polygon points="121,120.5 287.5,120.5 261.6,178 95.1,178"/><polygon points="297.5,120.5 459,120.5 433.1,178 271.6,178"/><polygon points="469,120.5 630.5,120.5 604.6,178 443.1,178"/><polygon points="640.5,120.5 807,120.5 781.1,178 614.6,178"/></g>
+          <path class="panel-cells" d="M177.8 56L151.9 113.5M205.5 56L179.6 113.5M233.3 56L207.4 113.5M261 56L235.1 113.5M288.8 56L262.9 113.5M141.4 75.2L307.9 75.2M132.8 94.3L299.3 94.3M353.4 56L327.5 113.5M380.3 56L354.5 113.5M407.3 56L381.4 113.5M434.2 56L408.3 113.5M461.1 56L435.2 113.5M317.9 75.2L479.4 75.2M309.3 94.3L470.8 94.3M524.9 56L499 113.5M551.8 56L526 113.5M578.8 56L552.9 113.5M605.7 56L579.8 113.5M632.6 56L606.7 113.5M489.4 75.2L650.9 75.2M480.8 94.3L642.3 94.3M697.3 56L671.4 113.5M725 56L699.1 113.5M752.8 56L726.9 113.5M780.5 56L754.6 113.5M808.3 56L782.4 113.5M660.9 75.2L827.4 75.2M652.3 94.3L818.8 94.3M148.7 120.5L122.8 178M176.5 120.5L150.6 178M204.2 120.5L178.3 178M232 120.5L206.1 178M259.7 120.5L233.9 178M112.3 139.7L278.9 139.7M103.7 158.8L270.2 158.8M324.4 120.5L298.5 178M351.3 120.5L325.4 178M378.2 120.5L352.4 178M405.1 120.5L379.3 178M432.1 120.5L406.2 178M288.9 139.7L450.4 139.7M280.2 158.8L441.7 158.8M495.9 120.5L470 178M522.8 120.5L496.9 178M549.7 120.5L523.9 178M576.6 120.5L550.8 178M603.6 120.5L577.7 178M460.4 139.7L621.9 139.7M451.7 158.8L613.2 158.8M668.2 120.5L642.4 178M696 120.5L670.1 178M723.7 120.5L697.9 178M751.5 120.5L725.6 178M779.2 120.5L753.4 178M631.9 139.7L798.4 139.7M623.2 158.8L789.7 158.8"/>
+          <g clip-path="url(#panelClip)"><rect class="glint" x="0" y="0" width="90" height="222" fill="url(#glintGrad)"/></g>
+          <line class="roof-ridge" x1="166" y1="35" x2="892" y2="33"/>
+          <rect class="fascia" x="0" y="203" width="908" height="19" rx="6"/>
+          <line class="roof-rake" x1="886" y1="30" x2="996" y2="232"/>
+        </svg>
+
+        <div class="house-body">
+          <div class="wall">
+            <span class="window window--left" aria-hidden="true">
+            <svg viewBox="0 0 160 172">
+              <rect class="win-shadow" x="6" y="158" width="152" height="10" rx="3"/>
+              <rect class="win-frame" x="14" y="6" width="132" height="144" rx="4"/>
+              <rect x="24" y="16" width="112" height="124" fill="url(#glassDay)"/>
+              <rect class="win-lit" x="24" y="16" width="112" height="124" fill="url(#glassNight)"/>
+              <g clip-path="url(#glassClip)">
+                <g class="win-refl">
+                  <polygon points="18,140 92,16 132,16 58,140" fill="#fff" opacity=".42"/>
+                  <polygon points="72,140 140,26 140,48 86,140" fill="#fff" opacity=".28"/>
+                </g>
+              </g>
+              <rect class="win-frame" x="76" y="16" width="8" height="124"/>
+              <rect class="win-frame" x="24" y="74" width="112" height="8"/>
+              <rect class="win-frame" x="4" y="144" width="152" height="14" rx="3"/>
+            </svg>
+          </span>
+            <span class="window window--right" aria-hidden="true">
+            <svg viewBox="0 0 160 172">
+              <rect class="win-shadow" x="6" y="158" width="152" height="10" rx="3"/>
+              <rect class="win-frame" x="14" y="6" width="132" height="144" rx="4"/>
+              <rect x="24" y="16" width="112" height="124" fill="url(#glassDay)"/>
+              <rect class="win-lit" x="24" y="16" width="112" height="124" fill="url(#glassNight)"/>
+              <g clip-path="url(#glassClip)">
+                <g class="win-refl">
+                  <polygon points="18,140 92,16 132,16 58,140" fill="#fff" opacity=".42"/>
+                  <polygon points="72,140 140,26 140,48 86,140" fill="#fff" opacity=".28"/>
+                </g>
+              </g>
+              <rect class="win-frame" x="76" y="16" width="8" height="124"/>
+              <rect class="win-frame" x="24" y="74" width="112" height="8"/>
+              <rect class="win-frame" x="4" y="144" width="152" height="14" rx="3"/>
+            </svg>
+          </span>
+
+            <div class="hero-copy">
+              <h1 id="hero-title">
+                Você está cansado de pagar <mark>caro</mark> nas suas contas de luz?
+              </h1>
+              <p class="hero-lead">
+                Mora em Sorocaba e região? <strong>Conheça</strong> o nosso sistema de <strong>energia solar.</strong>
+              </p>
+              <a class="btn-primary" href="#simulacao">
+                Fazer minha simulação
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <p class="hero-note">Para residências com conta de luz acima de R$&nbsp;450 por mês.</p>
+            </div>
+          </div>
+          <div class="side-wall" aria-hidden="true"><span class="vent"></span></div>
+        </div>
+
+        <svg class="bush bush--left" viewBox="0 0 240 180" aria-hidden="true">
+          <g class="bush-leaves"><g transform="translate(58 168) rotate(-38) scale(0.9)"><path class="leaf leaf--0" fill="#3D7A45" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(84 166) rotate(-16) scale(1.15)"><path class="leaf leaf--1" fill="#4B8C4E" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(112 166) rotate(6) scale(1.25)"><path class="leaf leaf--2" fill="#3D7A45" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(140 168) rotate(24) scale(1.05)"><path class="leaf leaf--3" fill="#4B8C4E" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(168 170) rotate(42) scale(0.85)"><path class="leaf leaf--4" fill="#3D7A45" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(98 168) rotate(-4) scale(0.95)"><path class="leaf leaf--5" fill="#5A9A55" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g></g>
+          <g class="bush-crown">
+            <circle cx="72" cy="140" r="46" fill="#5E9A4C"/>
+            <circle cx="124" cy="122" r="56" fill="#6AA651"/>
+            <circle cx="176" cy="144" r="42" fill="#5E9A4C"/>
+            <circle cx="108" cy="104" r="26" fill="#80B85E"/>
+            <circle cx="62" cy="128" r="18" fill="#76AF57"/>
+            <path d="M20 180Q30 150 60 152Q90 156 120 150Q160 146 190 154Q222 160 226 180Z" fill="#4F8B45"/>
+          </g>
+        </svg>
+        <svg class="bush bush--right" viewBox="0 0 240 180" aria-hidden="true">
+          <g class="bush-leaves"><g transform="translate(58 168) rotate(-38) scale(0.9)"><path class="leaf leaf--0" fill="#3D7A45" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(84 166) rotate(-16) scale(1.15)"><path class="leaf leaf--1" fill="#4B8C4E" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(112 166) rotate(6) scale(1.25)"><path class="leaf leaf--2" fill="#3D7A45" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(140 168) rotate(24) scale(1.05)"><path class="leaf leaf--3" fill="#4B8C4E" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(168 170) rotate(42) scale(0.85)"><path class="leaf leaf--4" fill="#3D7A45" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g><g transform="translate(98 168) rotate(-4) scale(0.95)"><path class="leaf leaf--5" fill="#5A9A55" d="M0 0C-15-28-13-70 0-104C13-70 15-28 0 0Z"/></g></g>
+          <g class="bush-crown">
+            <circle cx="72" cy="140" r="46" fill="#5E9A4C"/>
+            <circle cx="124" cy="122" r="56" fill="#6AA651"/>
+            <circle cx="176" cy="144" r="42" fill="#5E9A4C"/>
+            <circle cx="108" cy="104" r="26" fill="#80B85E"/>
+            <circle cx="62" cy="128" r="18" fill="#76AF57"/>
+            <path d="M20 180Q30 150 60 152Q90 156 120 150Q160 146 190 154Q222 160 226 180Z" fill="#4F8B45"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
