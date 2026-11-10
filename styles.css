@@ -30,6 +30,10 @@
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
+/* a logo leva a #topo: desconta o cabeçalho fixo para a rolagem voltar
+   ao início de verdade, sem esconder o título da hero atrás dele */
+#topo { scroll-margin-top: var(--header-h); }
+
 body {
   margin: 0;
   background: var(--o50);
@@ -1245,6 +1249,8 @@ body {
 }
 .file-text { overflow-wrap: anywhere; }
 
+.form-note { margin: 0; }
+.form-note li { font-size: .92rem; }
 .btn-submit { width: 100%; border: 0; cursor: pointer; font-family: inherit; margin-top: 4px; }
 .btn-submit:disabled {
   cursor: not-allowed;
@@ -1339,5 +1345,7 @@ body {
   .payback-marks { height: auto; display: flex; justify-content: space-between; gap: 16px; }
   .pm { position: static; transform: none; white-space: normal; }
   .pm-return { text-align: left; }
-  .footer-grid { flex-direction: column; align-items: flex-start; }
+  .footer-grid { flex-direction: column; align-items: flex-start; gap: 16px; }
+  /* em coluna, o "320px" do flex virava altura e abria um vão no rodapé */
+  .footer-grid p { flex: none; }
 }
