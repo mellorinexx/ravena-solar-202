@@ -608,35 +608,93 @@
     </section>
 
     <!-- ============ INFORMAÇÕES DO SISTEMA ============ -->
+    <!-- uma cena só: telhado → painéis sendo instalados → 12 a 20 painéis → 5 a 8 kWp → só residencial.
+         A sequência começa quando o telhado entra na tela (script.js põe .is-built na seção). -->
     <section class="section system" id="sistema" aria-labelledby="system-title">
       <div class="wrap system-grid">
-        <div class="reveal">
+        <div class="system-copy reveal">
           <p class="chip">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path class="ic-fill" d="M6 4h14l-2.5 10h-14z"/><path class="ic-thin" d="M13 4l-2.5 10M4.75 9h14"/><path d="M11 14v5M7.5 20h7"/></svg>
             O sistema
           </p>
           <h2 id="system-title">Fotovoltaico conectado à rede, feito para residências</h2>
-          <p class="section-lead">
-            Os painéis no telhado geram energia durante o dia. O que a casa não consome na hora vai para a rede da distribuidora e vira crédito na sua conta.
-          </p>
+
+          <!-- o fio laranja desce do texto até a potência, no ritmo da instalação -->
+          <div class="system-flow">
+            <p class="section-lead">
+              Os painéis no telhado geram energia durante o dia. O que a casa não consome na hora vai para a rede da distribuidora e vira crédito na sua conta.
+            </p>
+            <p class="kwp" id="kwp">
+              <span class="sr-only">5 a 8 kWp de potência: o tamanho típico do sistema.</span>
+              <span class="kwp-figure" aria-hidden="true"><span class="kwp-from"><span>5<i>a</i></span></span><span class="kwp-num" id="kwp-num">8</span><span class="kwp-unit">kWp</span></span>
+              <span class="kwp-gauge" aria-hidden="true"></span>
+              <span class="kwp-label" aria-hidden="true">de potência: o tamanho típico do sistema</span>
+            </p>
+          </div>
         </div>
-        <ul class="system-specs">
-          <li class="spec reveal">
-            <svg class="spec-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
-            <span class="spec-value">5 a 8&nbsp;kWp</span>
-            <span class="spec-label">tamanho típico do sistema</span>
-          </li>
-          <li class="spec reveal">
-            <svg class="spec-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14l2 14H3z"/><path d="M4 12h16M9.7 5l-.9 14M14.3 5l.9 14"/></svg>
-            <span class="spec-value">12 a 20 painéis</span>
-            <span class="spec-label">instalados no telhado</span>
-          </li>
-          <li class="spec reveal">
-            <svg class="spec-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
-            <span class="spec-value">Só residencial</span>
-            <span class="spec-label">projeto para a sua casa</span>
-          </li>
-        </ul>
+
+        <div class="roof reveal" id="roof">
+          <p class="roof-count"><strong>12 a 20 painéis</strong> instalados no telhado</p>
+          <svg class="roof-svg" viewBox="0 0 640 380" role="img" aria-label="Telhado de uma casa com 18 painéis solares instalados">
+            <defs>
+              <g id="rf-pv">
+                <rect class="rf-pv-body" width="46" height="56" rx="3"/>
+                <path class="rf-pv-grid" d="M23 1v54M1 19h44M1 37h44"/>
+              </g>
+              <linearGradient id="rf-wall-fade" gradientUnits="userSpaceOnUse" x1="0" y1="302" x2="0" y2="380">
+                <stop offset="0" stop-color="#fff"/>
+                <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="rf-edge-fade" gradientUnits="userSpaceOnUse" x1="0" y1="302" x2="0" y2="372">
+                <stop offset="0" stop-color="#123A55" stop-opacity=".45"/>
+                <stop offset="1" stop-color="#123A55" stop-opacity="0"/>
+              </linearGradient>
+              <clipPath id="rf-array"><rect x="170" y="88" width="296" height="176" rx="3"/></clipPath>
+            </defs>
+
+            <!-- só um trecho da parede, que se desfaz para baixo -->
+            <rect x="78" y="302" width="484" height="78" fill="url(#rf-wall-fade)"/>
+            <path d="M78 302v70M562 302v70" fill="none" stroke="url(#rf-edge-fade)" stroke-width="1.8"/>
+            <rect class="rf-shade" x="78" y="302" width="484" height="12"/>
+
+            <!-- água do telhado, fiadas de telha, cumeeira e beiral -->
+            <path class="rf-slope" d="M150 60H490L604 290H36z"/>
+            <path class="rf-course" d="M131 98H509M112 136H528M93.5 174H546.5M75 212H565M56 250H584"/>
+            <rect class="rf-trim" x="142" y="53" width="356" height="13" rx="6.5"/>
+            <rect class="rf-trim" x="28" y="289" width="584" height="13" rx="4"/>
+
+            <!-- trilhos de fixação: aparecem com o telhado, antes dos painéis -->
+            <path class="rf-rail" d="M162 104H474M162 128H474M162 164H474M162 188H474M162 224H474M162 248H474"/>
+
+            <!-- 18 painéis (6 × 3), instalados de baixo para cima -->
+            <g class="rf-array">
+                <g transform="translate(170 208)"><use class="rf-pv" href="#rf-pv" style="--i:0"/></g>
+                <g transform="translate(220 208)"><use class="rf-pv" href="#rf-pv" style="--i:1"/></g>
+                <g transform="translate(270 208)"><use class="rf-pv" href="#rf-pv" style="--i:2"/></g>
+                <g transform="translate(320 208)"><use class="rf-pv" href="#rf-pv" style="--i:3"/></g>
+                <g transform="translate(370 208)"><use class="rf-pv" href="#rf-pv" style="--i:4"/></g>
+                <g transform="translate(420 208)"><use class="rf-pv" href="#rf-pv" style="--i:5"/></g>
+                <g transform="translate(170 148)"><use class="rf-pv" href="#rf-pv" style="--i:6"/></g>
+                <g transform="translate(220 148)"><use class="rf-pv" href="#rf-pv" style="--i:7"/></g>
+                <g transform="translate(270 148)"><use class="rf-pv" href="#rf-pv" style="--i:8"/></g>
+                <g transform="translate(320 148)"><use class="rf-pv" href="#rf-pv" style="--i:9"/></g>
+                <g transform="translate(370 148)"><use class="rf-pv" href="#rf-pv" style="--i:10"/></g>
+                <g transform="translate(420 148)"><use class="rf-pv" href="#rf-pv" style="--i:11"/></g>
+                <g transform="translate(170 88)"><use class="rf-pv" href="#rf-pv" style="--i:12"/></g>
+                <g transform="translate(220 88)"><use class="rf-pv" href="#rf-pv" style="--i:13"/></g>
+                <g transform="translate(270 88)"><use class="rf-pv" href="#rf-pv" style="--i:14"/></g>
+                <g transform="translate(320 88)"><use class="rf-pv" href="#rf-pv" style="--i:15"/></g>
+                <g transform="translate(370 88)"><use class="rf-pv" href="#rf-pv" style="--i:16"/></g>
+                <g transform="translate(420 88)"><use class="rf-pv" href="#rf-pv" style="--i:17"/></g>
+            </g>
+            <g clip-path="url(#rf-array)"><rect class="rf-glint" x="60" y="70" width="70" height="220" transform="skewX(-22)"/></g>
+
+            <!-- marcação que liga o conjunto ao texto "12 a 20 painéis" -->
+            <path class="rf-leader" d="M443 116V0"/>
+            <circle class="rf-leader-dot" cx="443" cy="116" r="5.5"/>
+          </svg>
+          <p class="roof-sign"><strong>Só residencial</strong><span>Projeto para a sua casa</span></p>
+        </div>
       </div>
     </section>
 

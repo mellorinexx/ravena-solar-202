@@ -323,3 +323,51 @@
     life.classList.add('is-live');
   }
 })();
+
+/* =========================================================
+   Sistema: quando o telhado entra na tela, os painéis são instalados
+   (styles.css, .is-built) e a potência conta de 5 até 8 kWp; no fim
+   o 5 sai de dentro do 8 e o número vira a faixa '5 a 8 kWp'.
+   Roda uma vez só. Sem JS ou com menos movimento, tudo já aparece pronto.
+   ========================================================= */
+(function () {
+  const roof = document.getElementById('roof');
+  const kwp = document.getElementById('kwp');
+  const num = document.getElementById('kwp-num');
+  if (!roof || !kwp || !num) return;
+  const section = roof.closest('.system');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    section.classList.add('is-built');
+    kwp.classList.add('is-range');
+    return;
+  }
+
+  const PANELS_DONE = 1900;   // último painel assentado (styles.css: rf-install)
+  const STEP = 300;           // intervalo entre 5 → 6 → 7 → 8
+  num.textContent = '5';
+
+  function build() {
+    section.classList.add('is-built');
+    setTimeout(() => {
+      kwp.classList.add('is-counting');   // a barra enche junto com a contagem
+      [6, 7, 8].forEach((n, i) => {
+        setTimeout(() => {
+          num.textContent = n;
+          num.classList.remove('is-tick');
+          void num.offsetWidth;            // reinicia a animação do dígito
+          num.classList.add('is-tick');
+        }, STEP * (i + 1));
+      });
+      setTimeout(() => kwp.classList.add('is-range'), STEP * 3 + 550);
+    }, PANELS_DONE);
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    io.disconnect();
+    build();
+  }, { threshold: 0.4 });
+  io.observe(roof);
+})();
