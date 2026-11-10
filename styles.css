@@ -335,15 +335,6 @@ body {
 .section-head { max-width: 760px; margin-bottom: var(--space-head); }
 .section-lead { font-size: clamp(1.05rem, 1rem + .3vw, 1.2rem); line-height: 1.55; max-width: 62ch; }
 .section-lead.life-hint { margin-top: 12px; }
-/* marca-texto no mesmo laranja-dourado dos grifos; a frase é longa e quebra de linha, então o traço é um fundo que se repete em cada linha */
-.life-hint mark {
-  color: inherit;
-  background: linear-gradient(transparent 42%, rgba(242, 160, 61, .9) 42%, rgba(242, 160, 61, .9) 86%, transparent 86%);
-  padding: 0 .08em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-
 /* revelação ao rolar (script.js adiciona .is-visible) */
 .js .reveal {
   opacity: 0;
@@ -1100,7 +1091,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 24px !important;
+  margin-top: var(--space-head) !important;
   font-size: 1.05rem;
 }
 .warranty-proof svg {
