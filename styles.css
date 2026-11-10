@@ -334,6 +334,15 @@ body {
 
 .section-head { max-width: 760px; margin-bottom: var(--space-head); }
 .section-lead { font-size: clamp(1.05rem, 1rem + .3vw, 1.2rem); line-height: 1.55; max-width: 62ch; }
+.section-lead.life-hint { margin-top: 12px; }
+/* marca-texto no mesmo laranja-dourado dos grifos; a frase é longa e quebra de linha, então o traço é um fundo que se repete em cada linha */
+.life-hint mark {
+  color: inherit;
+  background: linear-gradient(transparent 42%, rgba(242, 160, 61, .9) 42%, rgba(242, 160, 61, .9) 86%, transparent 86%);
+  padding: 0 .08em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
 
 /* revelação ao rolar (script.js adiciona .is-visible) */
 .js .reveal {
@@ -930,42 +939,168 @@ body {
 .spec-value { font-size: 1.35rem; font-weight: 700; line-height: 1.2; }
 .spec-label { font-size: .95rem; }
 
-/* ---------------- 4.8 Garantia ---------------- */
-.warranty-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 24px);
-}
-.warranty-item {
-  position: relative;
-  padding: clamp(24px, 2.5vw, 34px);
-  border-radius: 24px;
-  background: var(--o100);
-  border-top: 5px solid var(--sun);
-}
-.warranty-item.is-key { border-top-color: var(--burnt); background: var(--o200); }
+/* ---------------- 4.8 Garantia ----------------
+   A garantia acompanha as fases da vida do filho: o cliente escolhe
+   5, 10 ou 25 anos na barra e vê o mesmo personagem crescendo.
+   Palco (SVG) + texto da fase + barra de idades (script.js). */
 .warranty-years { display: block; margin-bottom: 14px; font-size: 1.25rem; font-weight: 700; }
 .warranty-years span { font-size: clamp(3rem, 2.2rem + 2.5vw, 4.2rem); line-height: 1; margin-right: 4px; }
-.warranty-item p { line-height: 1.55; }
-.warranty-tag {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--o50);
-  border: 1.5px solid var(--burnt);
-  font-size: .8rem;
-  font-weight: 700;
+
+.life-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
 }
+.life-stage {
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--o50);
+  border: 1px solid var(--o200);
+  box-shadow: 0 24px 60px -34px rgba(18, 58, 85, .3);
+}
+/* proporção fixa: o palco nunca muda de altura ao trocar de fase */
+.life-svg { display: block; width: 100%; height: auto; aspect-ratio: 520 / 320; }
+
+/* --- ilustração: só as cores do site --- */
+.lf-skin { fill: var(--o200); stroke: var(--navy); stroke-width: 2.2; }
+.lf-hair { fill: var(--navy); stroke: var(--navy); stroke-width: 1.6; stroke-linejoin: round; }
+.lf-dot { fill: var(--navy); }
+.lf-line { fill: none; stroke: var(--navy); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lf-thin { stroke-width: 1.3; }
+.lf-sun circle { fill: var(--sun); }
+.lf-sun path { fill: none; stroke: var(--sun); stroke-width: 3.5; stroke-linecap: round; }
+.lf-ground { fill: var(--o100); }
+.lf-horizon { fill: none; stroke: var(--navy); stroke-opacity: .2; stroke-width: 1.5; }
+.lf-house rect, .lf-house .lf-roof { stroke: var(--navy); stroke-opacity: .45; stroke-width: 1.8; stroke-linejoin: round; }
+.lf-wall { fill: #fff; }
+.lf-roof { fill: var(--o200); }
+.lf-door { fill: var(--o200); }
+.lf-window { fill: var(--o100); }
+.lf-panel { fill: var(--navy); }
+.lf-panel-grid { fill: none; stroke: var(--o50); stroke-width: 1.2; }
+.lf-navy-line { stroke: var(--navy); stroke-opacity: .45; }
+.lf-house .lf-dot { fill-opacity: .6; }
+.lf-shadow { fill: var(--navy); opacity: .12; }
+.lf-limb-o { fill: none; stroke: var(--navy); stroke-linecap: round; }
+.lf-limb-sep { fill: none; stroke: var(--o50); stroke-linecap: round; }
+.lf-limb { fill: none; stroke-linecap: round; }
+.lf-limb-skin { stroke: var(--o200); }
+.lf-limb-navy { stroke: var(--navy); }
+.lf-shoe { fill: var(--sun); stroke: var(--navy); stroke-width: 2; stroke-linejoin: round; }
+.lf-shoe-work { fill: var(--burnt); }
+.lf-pants { fill: var(--navy); stroke: var(--navy); stroke-width: 2.2; stroke-linejoin: round; }
+.lf-shirt { fill: var(--sun); stroke: var(--navy); stroke-width: 2.2; stroke-linejoin: round; }
+.lf-stick { fill: none; stroke: var(--navy); stroke-width: 2.2; stroke-linecap: round; }
+.lf-vane-a, .lf-vane-b { stroke: var(--navy); stroke-width: 1.4; stroke-linejoin: round; }
+.lf-vane-a { fill: var(--sun); }
+.lf-vane-b { fill: var(--burnt); }
+.lf-ball { fill: #fff; stroke: var(--navy); stroke-width: 2; }
+.lf-suit { fill: var(--navy); stroke: var(--o50); stroke-width: 1.2; stroke-linejoin: round; }
+.lf-collar { fill: #fff; }
+.lf-lapel { fill: none; stroke: var(--o50); stroke-width: 1.2; stroke-linejoin: round; stroke-linecap: round; }
+.lf-tie { fill: var(--burnt); }
+.lf-button { fill: var(--o200); }
+.lf-cuff { fill: none; stroke: #fff; stroke-width: 3; }
+.lf-case { fill: var(--sun); stroke: var(--navy); stroke-width: 2.2; }
+.lf-clasp { fill: var(--o50); stroke: var(--navy); stroke-width: 1.3; }
+
+/* --- troca de fase: só a fase escolhida aparece --- */
+.life-fig {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+.life-fig.is-active { opacity: 1; transform: none; }
+
+/* --- animações: cada articulação gira na própria origem (0,0 do grupo,
+   posicionado no quadril, ombro ou mão pelo translate do grupo de fora) --- */
+.lf5-body, .lf5-arm, .lf10-leg, .lf10-body,
+.lf25-leg-f, .lf25-leg-b, .lf25-arm-f, .lf25-arm-b, .lf25-case { transform-origin: 0 0; }
+.lf5-wheel, .lf10-ball-spin { transform-box: fill-box; transform-origin: center; }
+
+.lf5-body  { animation: lf5-sway 3.2s ease-in-out infinite alternate; }
+.lf5-arm   { animation: lf5-wave 1.6s ease-in-out infinite alternate; }
+.lf5-wheel { animation: lf-spin 5s linear infinite; }
+@keyframes lf5-sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+@keyframes lf5-wave { from { transform: rotate(-7deg); } to { transform: rotate(5deg); } }
+@keyframes lf-spin  { to { transform: rotate(360deg); } }
+
+/* chute: a perna recua, bate e volta; a bola sai no instante do toque e rola de volta */
+.lf10-leg         { animation: lf10-kick 3s ease-in-out infinite; }
+.lf10-body        { animation: lf10-lean 3s ease-in-out infinite; }
+.lf10-ball-move   { animation: lf10-ball 3s ease-in-out infinite; }
+.lf10-ball-shadow { animation: lf10-ball-shadow 3s ease-in-out infinite; }
+.lf10-ball-spin   { animation: lf10-roll 3s ease-in-out infinite; }
+@keyframes lf10-kick {
+  0%, 100% { transform: rotate(0deg); }
+  28%      { transform: rotate(24deg); }
+  42%      { transform: rotate(-34deg); }
+  58%      { transform: rotate(-20deg); }
+}
+@keyframes lf10-lean {
+  0%, 100% { transform: rotate(0deg); }
+  28%      { transform: rotate(3deg); }
+  42%      { transform: rotate(-4deg); }
+}
+@keyframes lf10-ball {
+  0%, 38%, 100% { transform: translate(0, 0); animation-timing-function: ease-out; }
+  48%           { transform: translate(24px, -5px); animation-timing-function: ease-in; }
+  60%           { transform: translate(42px, 0); animation-timing-function: ease-in-out; }
+}
+@keyframes lf10-ball-shadow {
+  0%, 38%, 100% { transform: translateX(0); animation-timing-function: ease-out; }
+  60%           { transform: translateX(42px); animation-timing-function: ease-in-out; }
+}
+@keyframes lf10-roll {
+  0%, 38%, 100% { transform: rotate(0deg); animation-timing-function: ease-out; }
+  60%           { transform: rotate(220deg); animation-timing-function: ease-in-out; }
+}
+
+/* caminhada: pernas em oposição, corpo sobe um pouco a cada passo, maleta em pêndulo */
+.lf25-leg-f { animation: lf25-step 1.7s ease-in-out infinite alternate; }
+.lf25-leg-b { animation: lf25-step 1.7s ease-in-out -1.7s infinite alternate; }
+.lf25-arm-b { animation: lf25-arm 1.7s ease-in-out infinite alternate; }
+.lf25-arm-f { animation: lf25-carry 1.7s ease-in-out infinite alternate; }
+.lf25-case  { animation: lf25-swing 1.7s ease-in-out -.35s infinite alternate; }
+.lf25-bob   { animation: lf25-bob .85s ease-in-out infinite alternate; }
+@keyframes lf25-step  { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+@keyframes lf25-arm   { from { transform: rotate(-22deg); } to { transform: rotate(22deg); } }
+@keyframes lf25-carry { from { transform: rotate(5deg); } to { transform: rotate(-4deg); } }
+@keyframes lf25-swing { from { transform: rotate(7deg); } to { transform: rotate(-7deg); } }
+@keyframes lf25-bob   { from { transform: translateY(1.2px); } to { transform: translateY(-.6px); } }
+
+/* só a fase visível se move, e só com o palco na tela (.is-live vem do script.js) */
+.life-fig * { animation-play-state: paused; }
+.life.is-live .life-fig.is-active * { animation-play-state: running; }
+
+/* --- texto da fase: os três painéis ocupam a mesma célula,
+   então a altura é sempre a do maior e a página não pula --- */
+.life-panels { display: grid; }
+.js .life-panel {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .4s ease, transform .4s ease, visibility 0s .4s;
+}
+.js .life-panel.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity .4s ease, transform .4s ease, visibility 0s;
+}
+.life-panel + .life-panel { margin-top: 24px; }
+.js .life-panel + .life-panel { margin-top: 0; }
+.life-panel { border-radius: 8px; }
+.life-panel:focus-visible { outline: 3px solid var(--navy); outline-offset: 6px; }
+.life-panel p:last-child { font-size: 1.05rem; line-height: 1.55; max-width: 46ch; }
+
 .warranty-proof {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: var(--space-head) !important;
+  margin-top: 24px !important;
   font-size: 1.05rem;
 }
 .warranty-proof svg {
@@ -978,6 +1113,100 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* --- barra de idades: linha do tempo com marcador laranja que desliza --- */
+.life-bar {
+  margin-top: var(--space-head);
+  padding: 14px clamp(8px, 2vw, 24px) 10px;
+  border-radius: 24px;
+  background: var(--o100);
+}
+html:not(.js) .life-bar { display: none; }
+.life-bar-label { margin-bottom: 6px !important; text-align: center; font-size: .95rem; }
+.life-rail { position: relative; }
+.life-track {
+  position: absolute;
+  top: 17px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(18, 58, 85, .18);
+  overflow: hidden;
+}
+.life-track-fill {
+  display: block;
+  height: 100%;
+  background: var(--sun);
+  transform-origin: left center;
+  transform: scaleX(calc(var(--i) / 2));
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+}
+.life-slider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(100% / 3);
+  transform: translateX(calc(var(--i) * 100%));
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
+}
+.life-slider::after {
+  content: "";
+  position: absolute;
+  inset: 38px 6px 2px;
+  border-radius: 14px;
+  background: var(--o50);
+  box-shadow: 0 8px 18px -12px rgba(18, 58, 85, .45);
+}
+.life-knob {
+  position: absolute;
+  top: 19px;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 0 5px rgba(242, 160, 61, .25), 0 4px 10px -2px rgba(232, 114, 28, .55);
+}
+.life-tabs { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.life-tab {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 2px;
+  min-height: 92px;
+  margin: 0;
+  padding: 46px 6px 10px;
+  border: 0;
+  border-radius: 16px;
+  background: none;
+  color: var(--navy);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* ponto de cada idade na linha do tempo */
+.life-tab::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: var(--o50);
+  border: 2px solid var(--navy);
+  transition: transform .2s ease;
+}
+.life-tab:hover::before { transform: scale(1.25); }
+.life-tab-age { font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
+.life-tab-what { font-size: .9rem; line-height: 1.2; }
+.life-tab:focus-visible { outline: 3px solid var(--navy); outline-offset: -2px; }
 
 /* ---------------- 5. Simulação ---------------- */
 .simulation {
@@ -1310,14 +1539,19 @@ body {
   .js .reveal:not(.is-visible) h2 mark::before { transform: rotate(-1.2deg); }
   .js .chart:not(.is-visible) .chart-bar,
   .js .payback:not(.is-visible) .payback-return { transform: none; }
+  /* garantia: sem movimento contínuo; a troca de fase é instantânea */
+  .life-fig * { animation: none; }
+  .life-fig, .js .life-panel, .js .life-panel.is-active, .life-slider, .life-track-fill, .life-tab::before { transition: none; }
+  .life-fig, .js .life-panel { transform: none; }
 }
 
 /* ---------- tablet ---------- */
 @media (max-width: 899px) {
   :root { --space-section: 48px; --space-band: 36px; --space-head: 28px; }
   .case-grid, .system-grid, .sim-grid { grid-template-columns: minmax(0, 1fr); }
-  .cards, .warranty-list { grid-template-columns: minmax(0, 1fr); max-width: 620px; margin-inline: auto; }
-  .warranty-tag { position: static; display: inline-block; margin-bottom: 12px; }
+  .cards { grid-template-columns: minmax(0, 1fr); max-width: 620px; margin-inline: auto; }
+  .life-grid { grid-template-columns: minmax(0, 1fr); }
+  .life { max-width: 620px; margin-inline: auto; }
   /* sem espaço para "Instalação" ao lado do marcador; o ponto inicial já indica o começo */
   .pm-start { display: none; }
 }
@@ -1325,6 +1559,8 @@ body {
 /* ---------- celular ---------- */
 @media (max-width: 699px) {
   :root { --space-section: 40px; --space-band: 32px; --space-head: 24px; }
+  /* garantia: no palco estreito o elenco cresce (1,15 → 1,6) para o filho de 5 anos continuar legível */
+  .lf-cast { transform: translate(172px, 306px) scale(1.6); }
   .case-facts { grid-template-columns: minmax(0, 1fr); }
   /* no celular as contas ficam uma embaixo da outra, com a seta para baixo */
   .case-bills { grid-template-columns: minmax(0, 1fr); gap: 6px; }

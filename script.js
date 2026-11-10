@@ -262,3 +262,64 @@
     el.addEventListener('click', () => select(el.dataset.city));
   });
 })();
+
+/* =========================================================
+   Garantia: a barra de idades (5, 10, 25 anos) troca o personagem,
+   o texto e o marcador. Abas acessíveis: setas, Home e End mudam
+   de idade; só a fase visível fica animada (styles.css).
+   ========================================================= */
+(function () {
+  const life = document.getElementById('life');
+  if (!life) return;
+  const tabs = Array.from(life.querySelectorAll('[role="tab"]'));
+  const rail = life.querySelector('.life-rail');
+  const svg = document.getElementById('life-svg');
+  const figs = life.querySelectorAll('.life-fig');
+  const panels = life.querySelectorAll('.life-panel');
+  const labels = {
+    5: 'Criança de 5 anos brincando com um cata-vento em frente à casa com painéis solares',
+    10: 'O mesmo filho aos 10 anos, chutando uma bola em frente à casa com painéis solares',
+    25: 'O mesmo filho aos 25 anos, de terno e com uma maleta, saindo para trabalhar',
+  };
+
+  function select(index, focus) {
+    const tab = tabs[index];
+    const age = tab.dataset.age;
+    tabs.forEach((t, i) => {
+      t.setAttribute('aria-selected', String(i === index));
+      t.tabIndex = i === index ? 0 : -1;
+    });
+    figs.forEach((f) => f.classList.toggle('is-active', f.dataset.age === age));
+    panels.forEach((p) => {
+      const on = p.id === tab.getAttribute('aria-controls');
+      p.classList.toggle('is-active', on);
+      p.tabIndex = on ? 0 : -1;
+    });
+    rail.style.setProperty('--i', index);
+    svg.setAttribute('aria-label', labels[age]);
+    if (focus) tab.focus();
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(i, false));
+    tab.addEventListener('keydown', (ev) => {
+      let next = null;
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') next = (i + 1) % tabs.length;
+      else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') next = (i - 1 + tabs.length) % tabs.length;
+      else if (ev.key === 'Home') next = 0;
+      else if (ev.key === 'End') next = tabs.length - 1;
+      if (next === null) return;
+      ev.preventDefault();
+      select(next, true);
+    });
+  });
+
+  // as animações só rodam com o palco na tela
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((e) => life.classList.toggle('is-live', e.isIntersecting));
+    }, { threshold: 0.05 }).observe(life);
+  } else {
+    life.classList.add('is-live');
+  }
+})();

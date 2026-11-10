@@ -635,29 +635,206 @@
           <p class="section-lead">
             Sua casa levou anos para ser construída. Por isso, a garantia cobre os equipamentos e também o nosso trabalho no seu telhado.
           </p>
+          <p class="section-lead life-hint">
+            Para ter a dimensão dos prazos, <mark>imagine um filho que nasce no ano da instalação e escolha uma idade</mark>.
+          </p>
         </div>
-        <ul class="warranty-list">
-          <li class="warranty-item reveal">
-            <span class="warranty-years"><span>25</span> anos</span>
-            <h3>Performance do painel</h3>
-            <p>Garantia de performance dos painéis solares.</p>
-          </li>
-          <li class="warranty-item reveal">
-            <span class="warranty-years"><span>10</span> anos</span>
-            <h3>Inversor</h3>
-            <p>Garantia do inversor, o equipamento que converte a energia dos painéis para a casa.</p>
-          </li>
-          <li class="warranty-item is-key reveal">
-            <span class="warranty-tag">Nossa instalação</span>
-            <span class="warranty-years"><span>5</span> anos</span>
-            <h3>Instalação Ravena Solar</h3>
-            <p>Incluindo <strong>qualquer infiltração causada pela obra</strong>.</p>
-          </li>
-        </ul>
-        <p class="warranty-proof reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
-          São 6 anos em Sorocaba e 412 sistemas residenciais instalados na região.
-        </p>
+
+        <!-- a garantia acompanha as fases da vida do filho: 5, 10 e 25 anos (script.js) -->
+        <div class="life" id="life">
+          <div class="life-grid">
+            <div class="life-stage reveal">
+              <svg class="life-svg" id="life-svg" viewBox="0 0 520 320" role="img" aria-label="Criança de 5 anos brincando com um cata-vento em frente à casa com painéis solares">
+                <defs>
+                  <!-- a mesma cabeça nas três fases: é o mesmo filho crescendo -->
+                  <g id="lf-head">
+                    <circle class="lf-skin" r="15.5"/>
+                    <path class="lf-hair" d="M-15 7A16.6 16.6 0 0 1 10.7-12.7Q4-6.5-4-7Q-9-6-10 0Q-10.5 4-15 7z"/>
+                    <path class="lf-hair" d="M1-15Q3-22.5 9.5-20.5Q5.5-19 6.5-14z"/>
+                    <circle class="lf-dot" cx="2.5" cy="1.5" r="1.7"/>
+                    <circle class="lf-dot" cx="10" cy="1.5" r="1.7"/>
+                    <path class="lf-line" d="M3.5 7.5Q6.5 10.5 9.5 7.5"/>
+                  </g>
+                </defs>
+
+                <!-- cenário fixo: sol, casa com painéis e chão -->
+                <g class="lf-sun">
+                  <circle cx="70" cy="62" r="19"/>
+                  <path d="M70 29v-9M70 104v-9M37 62h-9M112 62h-9M46.7 38.7l-6.4-6.4M99.7 91.7l-6.4-6.4M93.3 38.7l6.4-6.4M40.3 91.7l6.4-6.4"/>
+                </g>
+                <rect class="lf-ground" x="0" y="236" width="520" height="84"/>
+                <path class="lf-horizon" d="M0 236h520"/>
+                <g class="lf-house">
+                  <rect class="lf-wall" x="356" y="160" width="120" height="76"/>
+                  <path class="lf-roof" d="M344 162l26-46h92l26 46z"/>
+                  <path class="lf-panel" d="M384 154l14-28h50l14 28z"/>
+                  <path class="lf-panel-grid" d="M391 140h64M410.5 126l-7 28M436.5 126l7 28M423.5 126v28"/>
+                  <rect class="lf-door" x="403" y="194" width="26" height="42"/>
+                  <circle class="lf-dot" cx="423.5" cy="216" r="1.6"/>
+                  <rect class="lf-window" x="367" y="180" width="24" height="22"/>
+                  <rect class="lf-window" x="441" y="180" width="24" height="22"/>
+                  <path class="lf-panel-grid lf-navy-line" d="M379 180v22M367 191h24M453 180v22M441 191h24"/>
+                </g>
+
+                <!-- personagens: pés em (0,0), mesma escala para a altura crescer de verdade -->
+                <g class="lf-cast" transform="translate(215 301) scale(1.15)">
+
+                  <!-- 5 anos: brincando com um cata-vento -->
+                  <g class="life-fig is-active" data-age="5">
+                    <ellipse class="lf-shadow" cx="2" cy="0" rx="26" ry="4"/>
+                    <path class="lf-limb-o" stroke-width="10.4" d="M-6-18v12M6-18v12"/>
+                    <path class="lf-limb lf-limb-skin" stroke-width="6" d="M-6-18v12M6-18v12"/>
+                    <path class="lf-shoe" d="M-10-6h6a6 4.5 0 0 1 6 4.5V0h-12z"/>
+                    <path class="lf-shoe" d="M2-6h6a6 4.5 0 0 1 6 4.5V0H2z"/>
+                    <g transform="translate(0 -20)"><g class="lf5-body">
+                      <g transform="translate(0 20)">
+                        <path class="lf-limb-o" stroke-width="9.4" d="M-10-49l-8 14"/>
+                        <path class="lf-limb lf-limb-skin" stroke-width="5" d="M-10-49l-8 14"/>
+                        <path class="lf-pants" d="M-12-30h24l1.5 14h-27z"/>
+                        <path class="lf-shirt" d="M-11-52Q0-56 11-52l1.5 24h-25z"/>
+                        <use href="#lf-head" transform="translate(0 -66)"/>
+                        <g transform="translate(10 -49)"><g class="lf5-arm">
+                          <path class="lf-limb-o" stroke-width="9.4" d="M0 0l14-9"/>
+                          <path class="lf-limb lf-limb-skin" stroke-width="5" d="M0 0l14-9"/>
+                          <path class="lf-stick" d="M12.5-1L17-36"/>
+                          <circle class="lf-skin" cx="14" cy="-9" r="3.6"/>
+                          <g transform="translate(17 -36)"><g class="lf5-wheel">
+                            <path class="lf-vane-a" d="M0 0V-12Q9-10 8 0z"/>
+                            <path class="lf-vane-b" d="M0 0H12Q10 9 0 8z"/>
+                            <path class="lf-vane-a" d="M0 0V12Q-9 10-8 0z"/>
+                            <path class="lf-vane-b" d="M0 0H-12Q-10-9 0-8z"/>
+                            <circle class="lf-dot" r="2"/>
+                          </g></g>
+                        </g></g>
+                      </g>
+                    </g></g>
+                  </g>
+
+                  <!-- 10 anos: chutando uma bola -->
+                  <g class="life-fig" data-age="10">
+                    <ellipse class="lf-shadow" cx="2" cy="0" rx="26" ry="4"/>
+                    <ellipse class="lf-shadow lf10-ball-shadow" cx="37" cy="0" rx="9" ry="2.5"/>
+                    <path class="lf-limb-o" stroke-width="10.9" d="M-4-42v36"/>
+                    <path class="lf-limb lf-limb-skin" stroke-width="6.5" d="M-4-42v36"/>
+                    <path class="lf-shoe" d="M-8.5-6h7a7 5 0 0 1 7 5V0h-14z"/>
+                    <g transform="translate(3 -42)"><g class="lf10-leg">
+                      <path class="lf-limb-o" stroke-width="10.9" d="M0 0v36"/>
+                      <path class="lf-limb lf-limb-skin" stroke-width="6.5" d="M0 0v36"/>
+                      <path class="lf-shoe" d="M-4.5 36h7a7 5 0 0 1 7 5v1h-14z"/>
+                    </g></g>
+                    <g transform="translate(0 -42)"><g class="lf10-body">
+                      <g transform="translate(0 42)">
+                        <path class="lf-limb-o" stroke-width="9.9" d="M-2-80l-12 22"/>
+                        <path class="lf-limb lf-limb-skin" stroke-width="5.5" d="M-2-80l-12 22"/>
+                        <path class="lf-pants" d="M-11-52h22l1.5 18h-25z"/>
+                        <path class="lf-shirt" d="M-7-86H7Q12-86 12.5-80L11.5-50H-11.5L-12.5-80Q-12-86-7-86z"/>
+                        <use href="#lf-head" transform="translate(0 -101.5)"/>
+                        <path class="lf-limb-o" stroke-width="9.9" d="M1-80l12 20"/>
+                        <path class="lf-limb lf-limb-skin" stroke-width="5.5" d="M1-80l12 20"/>
+                      </g>
+                    </g></g>
+                    <g class="lf10-ball-move"><g transform="translate(37 -8.5)"><g class="lf10-ball-spin">
+                      <circle class="lf-ball" r="8"/>
+                      <path class="lf-dot" d="M0-3.4l3.2 2.3-1.2 3.8h-4l-1.2-3.8z"/>
+                      <path class="lf-line lf-thin" d="M0-3.4V-8M3.2-1.1l4.3-1.6M2 2.7l2.7 3.8M-2 2.7l-2.7 3.8M-3.2-1.1l-4.3-1.6"/>
+                    </g></g></g>
+                  </g>
+
+                  <!-- 25 anos: de terno, indo trabalhar com a maleta -->
+                  <g class="life-fig" data-age="25">
+                    <ellipse class="lf-shadow" cx="2" cy="0" rx="30" ry="4.5"/>
+                    <!-- corpo de perfil, virado para a direita (o sentido da caminhada):
+                         braço de trás atrás do tronco, braço da maleta na frente -->
+                    <g class="lf25-bob"><g transform="translate(2 -130)"><g class="lf25-arm-b">
+                      <path class="lf-limb-sep" stroke-width="11.4" d="M0 0v44"/>
+                      <path class="lf-limb lf-limb-navy" stroke-width="9" d="M0 0v44"/>
+                      <circle class="lf-skin" cx="0" cy="49" r="4"/>
+                    </g></g></g>
+                    <g transform="translate(-1 -84)"><g class="lf25-leg-b">
+                      <path class="lf-limb-sep" stroke-width="13.4" d="M0 0v74"/>
+                      <path class="lf-limb lf-limb-navy" stroke-width="11" d="M0 0v74"/>
+                      <path class="lf-shoe lf-shoe-work" d="M-5.5 77h9a9 6 0 0 1 9 6v1h-18z"/>
+                    </g></g>
+                    <g transform="translate(1 -84)"><g class="lf25-leg-f">
+                      <path class="lf-limb-sep" stroke-width="13.4" d="M0 0v74"/>
+                      <path class="lf-limb lf-limb-navy" stroke-width="11" d="M0 0v74"/>
+                      <path class="lf-shoe lf-shoe-work" d="M-5.5 77h9a9 6 0 0 1 9 6v1h-18z"/>
+                    </g></g>
+                    <g class="lf25-bob">
+                      <rect class="lf-skin" x="-3" y="-144" width="9" height="12"/>
+                      <path class="lf-suit" d="M-9-138Q-14-137-14-130L-12.5-78H12.5L14-128Q14-135 8-137.5L3-139.5H-4z"/>
+                      <path class="lf-collar" d="M3.5-138.5L8-136.5Q12-135 12.4-130L12-116L10.5-112z"/>
+                      <path class="lf-tie" d="M7.5-136.2L11-134.6L11.8-121L9.8-115.5L7.4-121z"/>
+                      <path class="lf-lapel" d="M3.5-138.5L3-125L10.5-112L9.5-78"/>
+                      <circle class="lf-button" cx="6.6" cy="-101" r="1.5"/>
+                      <circle class="lf-button" cx="6.3" cy="-91" r="1.5"/>
+                      <use href="#lf-head" transform="translate(1.5 -155.5)"/>
+                    </g>
+                    <g class="lf25-bob"><g transform="translate(-4 -130)"><g class="lf25-arm-f">
+                      <path class="lf-limb-sep" stroke-width="11.4" d="M0 0v43"/>
+                      <path class="lf-limb lf-limb-navy" stroke-width="9" d="M0 0v43"/>
+                      <path class="lf-cuff" d="M-4.5 45.5h9"/>
+                      <g transform="translate(0 50)"><g class="lf25-case">
+                        <path class="lf-line" d="M-6 5V2a6 5 0 0 1 12 0v3"/>
+                        <rect class="lf-case" x="-18" y="5" width="36" height="25" rx="3"/>
+                        <path class="lf-line lf-thin" d="M-18 14h36"/>
+                        <rect class="lf-clasp" x="-3" y="11.5" width="6" height="5" rx="1"/>
+                      </g></g>
+                      <circle class="lf-skin" cx="0" cy="50" r="4"/>
+                    </g></g></g>
+                  </g>
+                </g>
+              </svg>
+            </div>
+
+            <div class="life-copy reveal">
+              <div class="life-panels">
+                <div class="life-panel is-active" role="tabpanel" id="life-panel-5" aria-labelledby="life-tab-5" tabindex="0">
+                  <p class="warranty-years"><span>5</span> anos</p>
+                  <h3>Instalação Ravena Solar</h3>
+                  <p>Até seu filho completar 5 anos, a instalação feita pela Ravena Solar está na garantia, incluindo <strong>qualquer infiltração causada pela obra</strong>.</p>
+                </div>
+                <div class="life-panel" role="tabpanel" id="life-panel-10" aria-labelledby="life-tab-10" tabindex="-1">
+                  <p class="warranty-years"><span>10</span> anos</p>
+                  <h3>Inversor</h3>
+                  <p>Até ele completar 10 anos, o inversor está na garantia. É o equipamento que converte a energia dos painéis para a casa.</p>
+                </div>
+                <div class="life-panel" role="tabpanel" id="life-panel-25" aria-labelledby="life-tab-25" tabindex="-1">
+                  <p class="warranty-years"><span>25</span> anos</p>
+                  <h3>Performance do painel</h3>
+                  <p>Até ele completar 25 anos, a performance dos painéis solares está na garantia.</p>
+                </div>
+              </div>
+              <p class="warranty-proof">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
+                São 6 anos em Sorocaba e 412 sistemas residenciais instalados na região.
+              </p>
+            </div>
+          </div>
+
+          <!-- barra de idades: linha do tempo com marcador que desliza -->
+          <div class="life-bar reveal">
+            <p class="life-bar-label" id="life-bar-label">Escolha a idade do seu filho</p>
+            <div class="life-rail" style="--i: 0">
+              <span class="life-track" aria-hidden="true"><span class="life-track-fill"></span></span>
+              <span class="life-slider" aria-hidden="true"><span class="life-knob"></span></span>
+              <div class="life-tabs" role="tablist" aria-labelledby="life-bar-label">
+                <button class="life-tab" type="button" role="tab" id="life-tab-5" data-age="5" aria-selected="true" aria-controls="life-panel-5">
+                  <span class="life-tab-age">5 anos</span>
+                  <span class="life-tab-what">Instalação</span>
+                </button>
+                <button class="life-tab" type="button" role="tab" id="life-tab-10" data-age="10" aria-selected="false" aria-controls="life-panel-10" tabindex="-1">
+                  <span class="life-tab-age">10 anos</span>
+                  <span class="life-tab-what">Inversor</span>
+                </button>
+                <button class="life-tab" type="button" role="tab" id="life-tab-25" data-age="25" aria-selected="false" aria-controls="life-panel-25" tabindex="-1">
+                  <span class="life-tab-age">25 anos</span>
+                  <span class="life-tab-what">Painéis</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
