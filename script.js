@@ -195,40 +195,40 @@
     }
   });
 
-  /* ---------- envio: Google Apps Script → planilha + e-mail ----------
-     A URL fica no atributo data-endpoint do <form> (index.html).
-     Instalação: integracoes/LEIA-ME.md */
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(String(r.result).split(',')[1]);
-      r.onerror = () => reject(r.error);
-      r.readAsDataURL(file);
-    });
-  }
-
+  /* ---------- envio: só um e-mail, pelo FormSubmit ----------
+     O endereço de destino fica no atributo data-endpoint do <form> (index.html). */
   async function sendLead() {
     const endpoint = form.dataset.endpoint;
     if (!endpoint) throw new Error('Envio não configurado: preencha data-endpoint no formulário.');
 
-    const file = f.arquivo.files[0];
-    const payload = {
-      nome: f.nome.value.trim(),
-      whatsapp: digits(f.whats.value),
-      cidade: f.cidade.value.trim(),
-      conta: parseMoney(f.conta.value),
-      site: form.elements.site.value,   // campo-armadilha contra robôs
-      arquivo: file ? { nome: file.name, tipo: file.type, base64: await fileToBase64(file) } : null,
-    };
+    // campo-armadilha preenchido = robô: finge sucesso e não envia nada
+    if (form.elements.site.value) return;
 
-    // text/plain evita o preflight de CORS, que o Apps Script não responde
+    const nome = f.nome.value.trim();
+    const cidade = f.cidade.value.trim();
+    const whats = digits(f.whats.value);
+    const valor = parseMoney(f.conta.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const file = f.arquivo.files[0];
+
+    // os nomes dos campos viram os rótulos do e-mail
+    const data = new FormData();
+    data.append('_subject', `Nova simulação: ${nome} · ${cidade} · R$ ${valor}`);
+    data.append('_template', 'table');
+    data.append('_captcha', 'false');
+    data.append('Nome', nome);
+    data.append('WhatsApp', f.whats.value.trim());
+    data.append('Conversar no WhatsApp', `https://wa.me/55${whats}`);
+    data.append('Cidade', cidade);
+    data.append('Conta média', `R$ ${valor}`);
+    if (file) data.append('Conta anexada', file, file.name);
+
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload),
+      headers: { Accept: 'application/json' },
+      body: data,
     });
     const out = await res.json();
-    if (!out.ok) throw new Error('Apps Script recusou: ' + out.erro);
+    if (!res.ok || String(out.success) !== 'true') throw new Error('FormSubmit recusou: ' + out.message);
   }
 })();
 
