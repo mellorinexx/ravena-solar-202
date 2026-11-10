@@ -1578,6 +1578,49 @@ html:not(.js) .life-bar { display: none; }
 .sim-form input:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 4px var(--o200); }
 .sim-form input[aria-invalid="true"] { border-color: var(--burnt); box-shadow: 0 0 0 3px var(--o200); }
 
+/* lista de cidades (combobox): mesma linguagem dos campos e cartões */
+.combo { position: relative; }
+.sim-form .combo input { padding-right: 46px; }
+.combo::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  top: 26px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--navy);
+  border-bottom: 2px solid var(--navy);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+.combo-list {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  max-height: 232px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--o50);
+  border: 1.5px solid var(--navy);
+  border-radius: 14px;
+  box-shadow: 0 14px 34px -22px rgba(18, 58, 85, .35);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(18, 58, 85, .35) transparent;
+}
+.combo-list[hidden] { display: none; }
+.combo-list li {
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  line-height: 1.3;
+}
+.combo-list li:hover { background: var(--o100); }
+.combo-list li.is-active { background: var(--o200); }
+
 .input-money { position: relative; }
 .input-money span {
   position: absolute;

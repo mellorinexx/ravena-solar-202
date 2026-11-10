@@ -159,6 +159,97 @@
     f[k].addEventListener('input', () => setError(f[k], id, ''));
   });
 
+  /* ---------- lista de cidades no estilo do site ----------
+     Troca a lista nativa do <datalist> (preta, fora da paleta) por uma lista
+     própria. O campo continua aceitando texto livre (outras cidades até 80 km). */
+  (function cityCombo() {
+    const input = f.cidade;
+    const dl = document.getElementById('cidades');
+    if (!input || !dl) return;
+    const cities = Array.from(dl.options, (o) => o.value);
+    const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+    const wrap = document.createElement('div');
+    wrap.className = 'combo';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    const list = document.createElement('ul');
+    list.className = 'combo-list';
+    list.id = 'cidades-lista';
+    list.setAttribute('role', 'listbox');
+    list.hidden = true;
+    wrap.appendChild(list);
+
+    input.removeAttribute('list');
+    dl.remove();
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', list.id);
+    input.setAttribute('aria-expanded', 'false');
+
+    let items = [];
+    let active = -1;
+
+    function setActive(i) {
+      active = i;
+      items.forEach((li, k) => li.classList.toggle('is-active', k === i));
+      if (i >= 0) {
+        input.setAttribute('aria-activedescendant', items[i].id);
+        items[i].scrollIntoView({ block: 'nearest' });
+      } else {
+        input.removeAttribute('aria-activedescendant');
+      }
+    }
+    function close() {
+      list.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      setActive(-1);
+    }
+    function choose(city) {
+      input.value = city;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      close();
+    }
+    function open(filter) {
+      const q = norm(filter.trim());
+      const found = cities.filter((c) => !q || norm(c).includes(q));
+      list.replaceChildren();
+      items = found.map((c, k) => {
+        const li = document.createElement('li');
+        li.id = 'cidade-op-' + k;
+        li.setAttribute('role', 'option');
+        li.textContent = c;
+        li.addEventListener('mousedown', (e) => { e.preventDefault(); choose(c); });
+        list.appendChild(li);
+        return li;
+      });
+      if (!items.length) { close(); return; }
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      setActive(-1);
+    }
+
+    input.addEventListener('focus', () => open(''));
+    input.addEventListener('click', () => { if (list.hidden) open(''); });
+    input.addEventListener('input', () => open(input.value));
+    input.addEventListener('blur', close);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (list.hidden) open(input.value);
+        if (!items.length) return;
+        const d = e.key === 'ArrowDown' ? 1 : -1;
+        setActive((active + d + items.length) % items.length);
+      } else if (e.key === 'Enter' && !list.hidden && active >= 0) {
+        e.preventDefault();
+        choose(items[active].textContent);
+      } else if (e.key === 'Escape' && !list.hidden) {
+        e.preventDefault();
+        close();
+      }
+    });
+  })();
+
   function validate() {
     const bill = checkBill();
     const okNome = setError(f.nome, 'e-nome', f.nome.value.trim().length < 2 ? 'Informe o seu nome.' : '');
