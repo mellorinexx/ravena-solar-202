@@ -262,65 +262,16 @@
     return okNome && okWhats && okCidade && okConta && bill.qualified;
   }
 
-  const sendError = document.getElementById('e-envio');
-  const submitLabel = submit.firstChild.textContent;
-
-  form.addEventListener('submit', async (ev) => {
+  /* O formulário ainda não envia para lugar nenhum: a Ravena Solar não tem
+     e-mail próprio ainda. Por enquanto só mostra a mensagem de enviado;
+     o envio será ligado aqui quando o e-mail existir. */
+  form.addEventListener('submit', (ev) => {
     ev.preventDefault();
-    sendError.textContent = '';
     if (!validate()) return;
-
-    submit.disabled = true;
-    submit.firstChild.textContent = 'Enviando… ';
-    try {
-      await sendLead();
-      form.hidden = true;
-      success.hidden = false;
-      success.focus();
-    } catch (err) {
-      console.error(err);
-      sendError.textContent = 'Não foi possível enviar agora. Confira sua conexão e tente de novo.';
-      submit.disabled = false;
-    } finally {
-      submit.firstChild.textContent = submitLabel;
-    }
+    form.hidden = true;
+    success.hidden = false;
+    success.focus();
   });
-
-  /* ---------- envio: só um e-mail, pelo FormSubmit ----------
-     O endereço de destino fica no atributo data-endpoint do <form> (index.html). */
-  async function sendLead() {
-    const endpoint = form.dataset.endpoint;
-    if (!endpoint) throw new Error('Envio não configurado: preencha data-endpoint no formulário.');
-
-    // campo-armadilha preenchido = robô: finge sucesso e não envia nada
-    if (form.elements.site.value) return;
-
-    const nome = f.nome.value.trim();
-    const cidade = f.cidade.value.trim();
-    const whats = digits(f.whats.value);
-    const valor = parseMoney(f.conta.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const file = f.arquivo.files[0];
-
-    // os nomes dos campos viram os rótulos do e-mail
-    const data = new FormData();
-    data.append('_subject', `Nova simulação: ${nome} · ${cidade} · R$ ${valor}`);
-    data.append('_template', 'table');
-    data.append('_captcha', 'false');
-    data.append('Nome', nome);
-    data.append('WhatsApp', f.whats.value.trim());
-    data.append('Conversar no WhatsApp', `https://wa.me/55${whats}`);
-    data.append('Cidade', cidade);
-    data.append('Conta média', `R$ ${valor}`);
-    if (file) data.append('Conta anexada', file, file.name);
-
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { Accept: 'application/json' },
-      body: data,
-    });
-    const out = await res.json();
-    if (!res.ok || String(out.success) !== 'true') throw new Error('FormSubmit recusou: ' + out.message);
-  }
 })();
 
 /* =========================================================

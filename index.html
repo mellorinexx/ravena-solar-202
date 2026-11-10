@@ -958,12 +958,9 @@
         </figure>
 
         <div class="sim-card reveal">
-          <form class="sim-form" id="sim-form" novalidate data-endpoint="https://formsubmit.co/ajax/renataalbinooliveira1@gmail.com">
-            <!-- campo-armadilha: invisível para pessoas, robôs preenchem -->
-            <div class="hp" aria-hidden="true">
-              <label for="f-site">Site</label>
-              <input id="f-site" name="site" type="text" tabindex="-1" autocomplete="off">
-            </div>
+          <!-- Sem destino de envio: a Ravena Solar ainda não tem e-mail próprio.
+               O formulário só exibe "Solicitação enviada"; o envio será inserido depois (ver script.js). -->
+          <form class="sim-form" id="sim-form" novalidate>
 
             <div class="field">
               <label for="f-nome">Nome</label>
@@ -1023,8 +1020,6 @@
               <input id="f-arquivo" class="file-input" name="arquivo" type="file" accept="image/*,application/pdf">
               <p class="field-error" id="e-arquivo" aria-live="polite"></p>
             </div>
-
-            <p class="field-error" id="e-envio" role="alert"></p>
 
             <button class="btn-primary btn-submit" type="submit" id="sim-submit">
               Enviar minha simulação

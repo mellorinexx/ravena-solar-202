@@ -1558,7 +1558,6 @@ html:not(.js) .life-bar { display: none; }
 }
 .sim-form { display: grid; gap: 18px; }
 .sim-form[hidden] { display: none; }
-.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .field { display: grid; gap: 6px; }
 .field label, .field .label { font-weight: 700; font-size: .98rem; }
 .field small { font-weight: 400; }
