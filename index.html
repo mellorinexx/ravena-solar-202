@@ -21,42 +21,15 @@
     <!-- ============ HERO ============ -->
     <section class="hero" aria-labelledby="hero-title">
 
-      <!-- Céu: cor controlada pelo script (dia → noite) -->
-      <div class="sky" aria-hidden="true">
-        <div class="stars"></div>
-      </div>
-
-      <!-- Sol: cruza o céu em arco por cima do texto -->
-      <div class="sun" aria-hidden="true">
-        <svg viewBox="0 0 200 200">
-          <defs>
-            <radialGradient id="sunGlow">
-              <stop offset="0" stop-color="#F2A03D" stop-opacity=".35"/>
-              <stop offset="1" stop-color="#F2A03D" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="sunShade" cx=".38" cy=".35" r=".75">
-              <stop offset="0" stop-color="#fff" stop-opacity=".3"/>
-              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <circle cx="100" cy="100" r="100" fill="url(#sunGlow)"/>
-          <g class="sun-rays" stroke-width="7" stroke-linecap="round">
-            <line x1="156" y1="115" x2="179.2" y2="121.2"/>
-            <line x1="141" y1="141" x2="158" y2="158"/>
-            <line x1="115" y1="156" x2="121.2" y2="179.2"/>
-            <line x1="85" y1="156" x2="78.8" y2="179.2"/>
-            <line x1="59" y1="141" x2="42" y2="158"/>
-            <line x1="44" y1="115" x2="20.8" y2="121.2"/>
-            <line x1="44" y1="85" x2="20.8" y2="78.8"/>
-            <line x1="59" y1="59" x2="42" y2="42"/>
-            <line x1="85" y1="44" x2="78.8" y2="20.8"/>
-            <line x1="115" y1="44" x2="121.2" y2="20.8"/>
-            <line x1="141" y1="59" x2="158" y2="42"/>
-            <line x1="156" y1="85" x2="179.2" y2="78.8"/>
-          </g>
-          <circle class="sun-core" cx="100" cy="100" r="46"/>
-          <circle cx="100" cy="100" r="46" fill="url(#sunShade)"/>
-        </svg>
+      <!-- Fundo: Laranja 50 sólido → translúcido → foto da família -->
+      <div class="hero-photo">
+        <img
+          src="img/familia-painel-solar-1800.jpg"
+          srcset="img/familia-painel-solar-900.jpg 900w, img/familia-painel-solar-1800.jpg 1800w"
+          sizes="(max-width: 899px) 100vw, 66vw"
+          width="1800" height="1005"
+          alt="Pai, mãe e filho de costas no jardim, olhando para a casa com painéis solares no telhado"
+          fetchpriority="high">
       </div>
 
       <div class="hero-copy">
@@ -73,8 +46,149 @@
         <p class="hero-note">Para residências com conta de luz acima de R$&nbsp;450 por mês.</p>
       </div>
 
-      <!-- Casa: ilustração em SVG (redesenhada a partir da referência, sem imagem anexada) -->
-      <div class="hero-art">
+      <!-- Frase ligada à foto da família -->
+      <p class="hero-family">
+        <strong>Ravena Solar</strong>, especialista em proporcionar mais qualidade de vida para você e sua família.
+      </p>
+    </section>
+
+    <!-- ============ CASO REAL: TEXTO + GRÁFICO | CASA ============ -->
+    <section class="section case" aria-labelledby="case-title">
+      <div class="wrap case-grid">
+        <div class="case-copy">
+          <div class="reveal">
+            <p class="case-chip">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg>
+              Caso real
+            </p>
+            <h2 id="case-title">Uma casa em Sorocaba, antes e depois da <mark>energia solar</mark></h2>
+
+            <!-- Antes → depois: as duas contas ligadas por uma seta -->
+            <div class="case-bills" role="group" aria-label="Conta de luz: de R$ 780 por mês antes para R$ 118 por mês, em média, com energia solar. Redução de 85%.">
+              <div class="fact">
+                <svg class="fact-icon" viewBox="0 0 40 40" aria-hidden="true">
+                  <path class="ic-line" d="M5 19 20 6l15 13M9 16v18h22V16"/>
+                  <path class="ic-accent-fill" d="M21.5 15 15 24h5l-1.5 7 6.5-9h-5z"/>
+                </svg>
+                <span class="fact-text">
+                  <span class="fact-label">Conta antes</span>
+                  <span class="fact-value">R$&nbsp;780<small>/mês</small></span>
+                </span>
+              </div>
+              <div class="bill-arrow" aria-hidden="true">
+                <svg viewBox="0 0 64 24"><path class="bill-arrow-line" d="M2 12h56"/><path class="bill-arrow-head" d="M48 4l10 8-10 8"/></svg>
+              </div>
+              <div class="fact">
+                <svg class="fact-icon" viewBox="0 0 40 40" aria-hidden="true">
+                  <path class="ic-line" d="M3 22 18 9l15 13M7 19v15h22V19"/>
+                  <path class="ic-panel" d="M11 19.5l7-6 7 6z"/>
+                  <circle class="ic-accent-fill" cx="32" cy="8" r="3.4"/>
+                  <path class="ic-accent" d="M32 1.5v1.6M32 12.9v1.6M25.5 8h1.6M36.9 8h1.6M27.4 3.4l1.1 1.1M35.5 11.5l1.1 1.1M36.6 3.4l-1.1 1.1"/>
+                  <path class="ic-line" d="M15 34v-8h6v8"/>
+                </svg>
+                <span class="fact-text">
+                  <span class="fact-label">Com energia solar</span>
+                  <span class="fact-value">R$&nbsp;118<small>/mês</small></span>
+                </span>
+              </div>
+            </div>
+
+            <ul class="case-facts">
+              <li class="fact">
+                <svg class="fact-icon" viewBox="0 0 40 40" aria-hidden="true">
+                  <path class="ic-accent" d="M23 4 10 22h9l-3 14 14-19h-9z"/>
+                </svg>
+                <span class="fact-text">
+                  <span class="fact-label">Potência instalada</span>
+                  <span class="fact-value">6,4&nbsp;kWp</span>
+                </span>
+              </li>
+              <li class="fact">
+                <svg class="fact-icon" viewBox="0 0 40 40" aria-hidden="true">
+                  <rect class="ic-line" x="6" y="8" width="28" height="26" rx="4"/>
+                  <path class="ic-line" d="M6 16h28M13 4v7M27 4v7"/>
+                  <path class="ic-dots" d="M12 22h2M19 22h2M26 22h2M12 28h2M19 28h2"/>
+                  <path class="ic-accent" d="M26 28h2"/>
+                </svg>
+                <span class="fact-text">
+                  <span class="fact-label">Instalação</span>
+                  <span class="fact-value">Março de 2025</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          <figure class="chart reveal" aria-labelledby="chart-caption">
+            <div class="chart-main">
+              <figcaption id="chart-caption" class="chart-title">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="11" width="4" height="7" rx="1"/><rect x="8" y="7" width="4" height="11" rx="1"/><rect x="14" y="2" width="4" height="16" rx="1"/></svg>
+                Conta de luz mensal <span>(R$)</span>
+              </figcaption>
+              <div class="chart-rows" role="img" aria-label="Gráfico de barras: R$ 780 por mês antes da instalação e R$ 118 por mês, em média, depois. Redução de 85%.">
+                <div class="chart-row">
+                  <span class="chart-label">Antes</span>
+                  <div class="chart-track"><div class="chart-bar is-before"></div></div>
+                  <span class="chart-value">R$&nbsp;780</span>
+                </div>
+                <div class="chart-row">
+                  <span class="chart-label">Depois<small>média de 12 meses</small></span>
+                  <div class="chart-track"><div class="chart-bar is-after"></div></div>
+                  <span class="chart-value">R$&nbsp;118</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-saving">
+              <!-- moedas caem no cofrinho enquanto o valor sobe de R$ 0 a R$ 662 -->
+              <svg class="piggy" viewBox="0 0 64 56" aria-hidden="true">
+                <defs>
+                  <g id="pgCoin">
+                    <circle class="piggy-coin" r="7"/>
+                    <path class="piggy-coin-mark" d="M0-4.5v9M-2.5-1.8c0-1.2 1.1-1.8 2.5-1.8s2.5.6 2.5 1.7c0 2.6-5 1.4-5 4 0 1.1 1.1 1.8 2.5 1.8s2.5-.6 2.5-1.8"/>
+                  </g>
+                </defs>
+                <use class="coin-drop d1" href="#pgCoin"/>
+                <use class="coin-drop d2" href="#pgCoin"/>
+                <use class="coin-drop d3" href="#pgCoin"/>
+                <g class="piggy-pig">
+                  <path class="piggy-body" d="M10 34c0-9 9-15 21-15 9 0 15 3 18 8l6 1v10l-5 2c-1 3-3 5-6 7v6h-7v-4c-2 .4-5 .4-8 0v4h-7v-7c-5-3-8-7-8-12H8"/>
+                  <circle class="piggy-eye" cx="44" cy="30" r="1.6"/>
+                  <path class="piggy-slot" d="M25 23h10"/>
+                </g>
+                <use class="coin-rest" href="#pgCoin" transform="translate(34 9)"/>
+              </svg>
+              <p>Economia de<strong><span class="count" data-count="662" aria-hidden="true">R$&nbsp;662</span><span class="sr-only">R$&nbsp;662</span></strong>por mês</p>
+            </div>
+
+            <p class="chart-note">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9"/><path d="M6 10.2l2.7 2.7L14 7.6"/></svg>
+              <span>Economia de <strong>R$&nbsp;7.944 por ano</strong>, nessa casa.</span>
+            </p>
+          </figure>
+        </div>
+
+        <!-- Casa ilustrada em perspectiva (antes ficava na hero) -->
+        <div class="case-art reveal">
+        <!-- Sol animado atrás da casa -->
+        <svg class="case-sun" viewBox="-100 -100 200 200" aria-hidden="true">
+          <defs>
+            <radialGradient id="caseSunGlow">
+              <stop offset="0" stop-color="#F2A03D" stop-opacity=".45"/>
+              <stop offset="1" stop-color="#F2A03D" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="caseSunCore" cx=".4" cy=".38">
+              <stop offset="0" stop-color="#F7BE6A"/>
+              <stop offset=".65" stop-color="#F2A03D"/>
+              <stop offset="1" stop-color="#E8721C"/>
+            </radialGradient>
+          </defs>
+          <circle class="case-sun-glow" r="98" fill="url(#caseSunGlow)"/>
+          <g class="case-sun-rays">
+            <path d="M0-92v22M0 92V70M-92 0h22M92 0H70M-65-65l15.6 15.6M65 65 49.4 49.4M65-65 49.4-49.4M-65 65l15.6-15.6"/>
+            <path class="short" d="M-35.2-85l6.1 14.7M35.2 85l-6.1-14.7M85-35.2l-14.7 6.1M-85 35.2l14.7-6.1M35.2-85l-6.1 14.7M-35.2 85l6.1-14.7M85 35.2l-14.7-6.1M-85-35.2l14.7 6.1"/>
+          </g>
+          <circle r="52" fill="url(#caseSunCore)"/>
+        </svg>
         <svg class="house" viewBox="120 8 1190 1100" role="img" aria-labelledby="house-title">
           <title id="house-title">Casa de dois andares em corte, com painéis solares no telhado</title>
 <defs>
@@ -380,7 +494,7 @@
 <path d="M783.5 159.5L733.1 211.1M804.8 163.6L754.7 215.4M826.1 167.7L776.4 219.8M847.3 171.9L798.1 224.2M868.6 176L819.8 228.6M749.5 168.2L877.8 193.3M736.8 181L865.7 206.5M724.1 193.9L853.6 219.7" stroke="#6F93B8" stroke-width="1.1" opacity=".75" fill="none"/>
 </g>
 <clipPath id="hsPanelClip"><polygon points="513,38 949,118 842,235 387,143"/></clipPath>
-<g clip-path="url(#hsPanelClip)"><rect class="glint" x="300" y="0" width="70" height="300" fill="#fff" opacity=".22" transform="skewX(-25)"/></g>
+<g clip-path="url(#hsPanelClip)"><g class="glint"><rect x="300" y="0" width="70" height="300" fill="#fff" opacity=".22" transform="skewX(-25)"/></g></g>
 <polyline points="169.5,289 510.5,22.5 1099.5,129.5 1291,265" fill="none" stroke="#152F47" stroke-width="3" stroke-linejoin="round"/>
 <polygon points="167,289 209,301 214,323 167,310" fill="#FB8F30"/>
 <polygon points="209,301 377,167 380,191 215,322" fill="#E9770B"/>
@@ -388,61 +502,7 @@
 <polygon points="1100,139 1104,168 1000,288 962,313 962,288" fill="#EE802A"/>
 <polygon points="1104,140 1112,144 1287,268 1281,296 1262,282 1104,168" fill="#F68927"/>
         </svg>
-      </div>
-    </section>
-
-    <!-- ============ TEXTO CURTO ============ -->
-    <section class="intro" aria-label="Sobre a Ravena Solar">
-      <div class="wrap">
-        <p class="intro-text reveal">
-          <strong>Ravena Solar</strong>, especialista em proporcionar mais qualidade de vida para você e sua família.
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ DEPOIMENTO + GRÁFICO ============ -->
-    <section class="section case" aria-labelledby="case-title">
-      <div class="wrap case-grid">
-        <div class="case-copy reveal">
-          <p class="eyebrow">Caso real</p>
-          <h2 id="case-title">Uma casa em Sorocaba, antes e depois da energia solar</h2>
-          <ul class="case-facts">
-            <li>
-              <span class="fact-label">Conta antes</span>
-              <span class="fact-value">R$&nbsp;780/mês</span>
-            </li>
-            <li>
-              <span class="fact-label">Sistema instalado</span>
-              <span class="fact-value">6,4&nbsp;kWp</span>
-            </li>
-            <li>
-              <span class="fact-label">Instalação</span>
-              <span class="fact-value">Março de 2025</span>
-            </li>
-            <li>
-              <span class="fact-label">Conta média nos últimos 12 meses</span>
-              <span class="fact-value">R$&nbsp;118</span>
-            </li>
-          </ul>
         </div>
-
-        <figure class="chart reveal" aria-labelledby="chart-caption">
-          <figcaption id="chart-caption" class="chart-title">Conta de luz mensal (R$)</figcaption>
-          <div class="chart-plot" role="img" aria-label="Gráfico de barras: R$ 780 por mês antes da instalação e R$ 118 por mês, em média, depois. Redução de 85%.">
-            <div class="chart-col">
-              <span class="chart-value">R$&nbsp;780</span>
-              <div class="chart-bar is-before" style="--h: 100%"></div>
-              <span class="chart-label">Antes</span>
-            </div>
-            <div class="chart-col">
-              <span class="chart-value">R$&nbsp;118</span>
-              <div class="chart-bar is-after" style="--h: 15.13%"></div>
-              <span class="chart-label">Depois<small>média de 12 meses</small></span>
-            </div>
-            <span class="chart-badge">−85%</span>
-          </div>
-          <p class="chart-note">Economia de <strong>R$&nbsp;662 por mês</strong> nessa casa.</p>
-        </figure>
       </div>
     </section>
 

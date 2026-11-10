@@ -63,3 +63,18 @@ O navegador tenta as fontes nessa ordem: se a Helvetica Neue não estiver instal
 O texto corrido (parágrafos, legendas, listas) fica no peso normal (`font-weight: 400`).
 
 A cor do texto continua sendo o azul-marinho `#123A55`, inclusive nos títulos e na hero.
+
+## Espaçamento entre seções
+
+Cada tópico (seção) da página usa um espaço vertical fixo, sempre o mesmo, para a página ficar compacta e com ritmo regular. Os valores ficam em variáveis no `:root` de `styles.css`; não usar outros números nas seções.
+
+| Token | Laptop (≥ 900 px) | Tablet (700–899 px) | Celular (< 700 px) | Uso |
+|---|---|---|---|---|
+| `--space-section` | **56 px** | 48 px | 40 px | Respiro em cima e embaixo de cada seção (`.section`) |
+| `--space-band` | **40 px** | 36 px | 32 px | Faixas de destaque, como "A Ravena Solar em números" (`.stats`) |
+| `--space-head` | **32 px** | 28 px | 24 px | Entre o cabeçalho da seção (rótulo, título, texto de apoio) e o conteúdo |
+
+Regras:
+- A distância entre o conteúdo de duas seções vizinhas é a soma dos respiros das duas (ex.: seção + seção = 112 px; seção + faixa = 96 px no laptop). Não somar margens extras por cima disso.
+- Dentro de uma seção, os blocos (cartões, gráficos, listas) ficam a no máximo `--space-head` um do outro.
+- A hero não segue essa tabela: ela ocupa a primeira tela inteira.

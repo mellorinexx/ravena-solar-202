@@ -12,17 +12,17 @@
   --o50: #FEF7EE;
   --o100: #FDEDD8;
   --o200: #FBDDB8;
+  --o50-rgb: 254, 247, 238;
 
   --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --header-h: 68px;
 
-  /* Valores animados pelo script.js (estado inicial = manhã) */
-  --sky-top: #FEF7EE;
-  --sky-bottom: #FEF7EE;
-  --stars: 0;
-  --panel: 0;
-  --sun-core: #F2A03D;
-  --lights: 0;
+  --lights: 0;   /* janelas da casa ilustrada apagadas (dia) */
+
+  /* espaçamento entre seções (DESIGN.md) */
+  --space-section: 56px;
+  --space-band: 40px;
+  --space-head: 32px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -67,129 +67,137 @@ body {
 .header-link:hover { background-size: 100% 6px; }
 
 /* ---------------- Hero ----------------
-   Texto grande à esquerda, casa ilustrada (SVG) à direita, com margem
-   até a borda. O sol cruza o céu em arco acima do texto e passa atrás
-   da casa; o fundo vai de dia para noite (script.js).
-   Texto sempre em #123A55: à noite um painel translúcido em
-   Laranja 50 ganha opacidade (--panel) para manter o contraste.
-   Em telas estreitas (< 900px) o texto fica em cima e a casa embaixo.
+   Fundo em três tempos, da esquerda para a direita:
+   Laranja 50 sólido → faixa translúcida → foto da família.
+   Texto à esquerda, sobre o trecho sólido; a frase da Ravena
+   fica num cartão translúcido junto da família, na foto.
+   Em telas estreitas (< 900px) o texto fica em cima e a foto
+   embaixo, com a mesma transição na vertical.
    ------------------------------------------------------------- */
 .hero {
-  --sky-pad: clamp(64px, 12svh, 120px);   /* céu livre acima do conteúdo para o sol */
   position: relative;
   isolation: isolate;
   overflow: hidden;
   height: calc(100svh - var(--header-h));
-  min-height: 520px;
+  min-height: 540px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
-  align-items: center;
-  column-gap: clamp(24px, 3.5vw, 64px);
-  padding: var(--sky-pad) clamp(16px, 5vw, 80px) clamp(16px, 3svh, 32px);
-}
-
-.sky {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 100%);
-}
-
-/* estrelas */
-.stars {
-  position: absolute;
-  inset: 0;
-  opacity: var(--stars);
-}
-.star {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
+  align-items: start;   /* texto perto do topo, não no meio */
+  padding: clamp(28px, 7svh, 80px) clamp(16px, 5vw, 80px) clamp(24px, 4svh, 48px);
   background: var(--o50);
-  animation: twinkle 3.2s ease-in-out infinite alternate;
-}
-.star.is-big { width: 4px; height: 4px; }
-@keyframes twinkle {
-  from { opacity: .35; }
-  to   { opacity: 1; }
 }
 
-/* sol: posição e opacidade definidas pelo script */
-.sun {
+/* foto: ocupa a direita e entra por baixo da transição */
+.hero-photo {
   position: absolute;
   z-index: -1;
-  top: 0;
-  left: 0;
-  width: clamp(64px, 12vmin, 140px);
-  aspect-ratio: 1;
-  will-change: transform, opacity;
-  transform: translate(-300px, -300px);
+  inset: 0 0 0 40%;
 }
-.sun svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.sun-core { fill: var(--sun-core); }
-.sun-rays {
-  stroke: var(--sun-core);
-  transform-origin: 100px 100px;
-  animation: spin 40s linear infinite;
+.hero-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 48% 70%;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* sólido → translúcido → imagem */
+.hero-photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right,
+    var(--o50) 0%,
+    rgba(var(--o50-rgb), .88) 8%,
+    rgba(var(--o50-rgb), .55) 18%,
+    rgba(var(--o50-rgb), .2) 27%,
+    rgba(var(--o50-rgb), 0) 36%);
+}
 
 /* texto (coluna esquerda) */
 .hero-copy {
-  position: relative;
-  max-width: 640px;
-  margin-left: calc(-1 * clamp(14px, 1.6vw, 28px));   /* o painel noturno não desloca o texto */
-  padding: clamp(14px, 1.6vw, 28px);
-  border-radius: 28px;
+  max-width: 680px;
   text-align: left;
-  background: rgba(254, 247, 238, var(--panel));
-  box-shadow: 0 18px 50px rgba(11, 38, 56, calc(var(--panel) * .35));
-  -webkit-backdrop-filter: blur(calc(var(--panel) * 10px));
-  backdrop-filter: blur(calc(var(--panel) * 10px));
 }
 
-/* casa (coluna direita): ocupa a altura disponível sem distorcer */
-.hero-art {
-  align-self: stretch;
-  min-height: 0;
-  container-type: size;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+/* frase ligada à família da foto */
+.hero-family {
+  position: absolute;
+  right: clamp(16px, 3.5vw, 56px);
+  bottom: clamp(16px, 4svh, 44px);
+  width: min(32rem, 44vw);   /* mais largo: a frase cabe em 2 linhas */
+  margin: 0;
+  padding: 18px 28px 18px 26px;
+  border-radius: 18px;
+  border-left: 4px solid var(--burnt);
+  background: rgba(var(--o50-rgb), .9);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 40px -18px rgba(18, 58, 85, .45);
+  font-size: clamp(1rem, .85rem + .45vw, 1.2rem);
+  line-height: 1.38;
+  text-wrap: pretty;
+  transition: box-shadow .35s ease, transform .35s ease;
 }
-.house {
-  display: block;
-  width: min(100cqw, calc(100cqh * 1190 / 1100));
-  height: auto;
-  aspect-ratio: 1190 / 1100;
-  overflow: visible;
+/* ao passar o mouse: a sombra cresce e o cartão sobe um pouco */
+.hero-family:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 30px 60px -22px rgba(18, 58, 85, .6),
+    0 10px 24px -12px rgba(18, 58, 85, .35);
 }
-/* luzes das janelas acendem à noite (--lights, script.js) */
-.house .lit { opacity: var(--lights); }
-.house .window { filter: drop-shadow(0 0 calc(var(--lights) * 14px) rgba(242, 160, 61, calc(var(--lights) * .9))); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-family { transition: box-shadow .35s ease; }
+  .hero-family:hover { transform: none; }
+}
+.hero-family strong {
+  font-weight: 700;
+  background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 92% / 100% .16em;
+}
 
 /* tipografia: Helvetica (DESIGN.md), 700 nos títulos */
 .hero h1 {
   margin: 0 0 .45em;
-  /* cresce com a largura e a altura: tablet em pé ganha título maior */
-  font-size: clamp(2rem, calc(3.3vw + 2.4svh), 5rem);
-  line-height: 1.08;
+  font-size: clamp(2.2rem, calc(3.5vw + 2.6svh), 5.6rem);
+  line-height: 1.06;
   font-weight: 700;
   letter-spacing: .005em;
   text-wrap: balance;
 }
+/* destaque do "caro": marca-texto que cobre a metade de baixo das letras,
+   por trás do texto, e é "grifado" da esquerda para a direita ao abrir */
 .hero h1 mark {
+  position: relative;
+  isolation: isolate;
   color: inherit;
-  background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 94% / 100% .2em;
-  border-radius: 4px;
-  padding: 0 .04em;
+  background: none;
+  padding: 0 .08em;
+}
+.hero h1 mark::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -.02em;
+  right: -.06em;
+  bottom: .06em;
+  height: .5em;
+  border-radius: .12em .3em .18em .26em;   /* ponta irregular de caneta */
+  background: var(--sun);
+  opacity: .9;
+  transform: rotate(-1.2deg) scaleX(0);
+  transform-origin: left center;
+  animation: grifar .75s cubic-bezier(.55, .1, .3, 1) .45s forwards;
+}
+@keyframes grifar {
+  to { transform: rotate(-1.2deg) scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 mark::before { animation: none; transform: rotate(-1.2deg); }
 }
 
 .hero-lead {
   margin: 0 0 1.3em;
-  font-size: clamp(1.05rem, calc(1vw + 1svh), 1.6rem);
+  font-size: clamp(1.1rem, calc(1vw + 1.1svh), 1.7rem);
   line-height: 1.4;
 }
 .hero-lead strong { font-weight: 700; }
@@ -236,28 +244,51 @@ body {
   line-height: 1.35;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sun-rays, .star { animation: none; }
-}
-
-/* ---------- tablet e celular: texto em cima, casa embaixo ---------- */
+/* ---------- tablet e celular: texto em cima, foto embaixo ---------- */
 @media (max-width: 899px) {
   .hero {
-    --sky-pad: clamp(64px, 11svh, 120px);
+    height: auto;
+    min-height: calc(100svh - var(--header-h));
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-    row-gap: clamp(8px, 2svh, 24px);
-    padding-inline: 16px;
+    grid-template-rows: auto minmax(300px, 1fr);
+    padding: clamp(28px, 5svh, 56px) 16px 0;
   }
   .hero-copy {
     justify-self: center;
-    margin-left: 0;
     max-width: 640px;
+    padding-bottom: clamp(20px, 3svh, 32px);
     text-align: center;
   }
-  .hero h1 { font-size: clamp(1.65rem, calc(3vw + 1.6svh), 3rem); line-height: 1.12; }
+  .hero-photo {
+    position: relative;
+    z-index: 0;
+    inset: auto;
+    grid-row: 2;
+    grid-column: 1;
+    align-self: stretch;
+    margin-inline: -16px;
+  }
+  .hero-photo img { object-position: 47% 75%; }
+  .hero-photo::before {
+    background: linear-gradient(to bottom,
+      var(--o50) 0%,
+      rgba(var(--o50-rgb), .6) 10%,
+      rgba(var(--o50-rgb), 0) 26%);
+  }
+  .hero-family {
+    position: relative;
+    z-index: 1;
+    right: auto;
+    bottom: auto;
+    grid-row: 2;
+    grid-column: 1;
+    align-self: end;
+    justify-self: center;
+    width: min(40rem, 100%);
+    margin-bottom: 16px;
+  }
+  .hero h1 { font-size: clamp(1.8rem, calc(3.6vw + 1.8svh), 3.4rem); line-height: 1.1; }
   .hero-lead { font-size: clamp(1rem, 2.2vw, 1.25rem); text-wrap: balance; }
-  .hero-art { justify-content: center; }
 }
 
 /* ---------- celular ---------- */
@@ -266,6 +297,7 @@ body {
   .header-link { font-size: .875rem; }
   .btn-primary { width: 100%; padding: 14px 16px; }
   .hero-note { font-size: .9rem; text-wrap: balance; }
+  .hero-family { font-size: .98rem; padding: 12px 14px 12px 16px; }
 }
 
 /* =========================================================
@@ -282,7 +314,7 @@ body {
   padding-inline: clamp(16px, 5vw, 48px);
 }
 
-.section { padding-block: clamp(64px, 9vw, 112px); }
+.section { padding-block: var(--space-section); }
 
 .section h2 {
   margin: 0 0 .5em;
@@ -293,7 +325,7 @@ body {
 }
 .section h3 { margin: 0 0 .35em; font-size: 1.15rem; line-height: 1.25; font-weight: 700; }
 .section p { margin: 0; }
-.section strong, .intro strong { font-weight: 700; }
+.section strong { font-weight: 700; }
 
 .eyebrow {
   display: inline-flex;
@@ -313,7 +345,7 @@ body {
   background: var(--burnt);
 }
 
-.section-head { max-width: 760px; margin-bottom: clamp(32px, 5vw, 56px); }
+.section-head { max-width: 760px; margin-bottom: var(--space-head); }
 .section-lead { font-size: clamp(1.05rem, 1rem + .3vw, 1.2rem); line-height: 1.55; max-width: 62ch; }
 
 /* revelação ao rolar (script.js adiciona .is-visible) */
@@ -324,111 +356,329 @@ body {
 }
 .js .reveal.is-visible { opacity: 1; transform: none; }
 
-/* ---------------- 4.2 Texto curto ---------------- */
-.intro {
-  background: var(--o100);
-  border-block: 1px solid var(--o200);
-  padding-block: clamp(40px, 6vw, 64px);
+/* ---------------- 4.3 / 4.4 Caso real: texto + gráfico | casa ---------------- */
+.case {
+  background:
+    radial-gradient(ellipse 60% 70% at 15% 0%, var(--o100), transparent 70%),
+    var(--o50);
 }
-.intro-text {
-  margin: 0 auto;
-  max-width: 30ch;
-  text-align: center;
-  font-size: clamp(1.4rem, 1rem + 1.8vw, 2.1rem);
-  line-height: 1.3;
-  text-wrap: balance;
-}
-.intro-text strong {
-  background: linear-gradient(var(--sun), var(--sun)) no-repeat 0 92% / 100% .16em;
-}
-
-/* ---------------- 4.3 / 4.4 Caso real + gráfico ---------------- */
 .case-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 6vw, 80px);
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  gap: clamp(32px, 5vw, 72px);
   align-items: center;
+}
+.case-copy { display: grid; gap: 20px; }
+
+/* selo "Caso real" com sol */
+.case-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px !important;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: var(--o200);
+  font-size: .9rem;
+  font-weight: 700;
+}
+.case-chip svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--burnt);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.case-chip svg circle { fill: var(--sun); stroke: none; }
+
+/* grifo em "energia solar", igual ao da hero, feito quando a seção aparece */
+.case h2 mark {
+  position: relative;
+  isolation: isolate;
+  color: inherit;
+  background: none;
+  padding: 0 .06em;
+  white-space: nowrap;
+}
+.case h2 mark::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -.02em;
+  right: -.06em;
+  bottom: .06em;
+  height: .42em;
+  border-radius: .12em .3em .18em .26em;
+  background: var(--sun);
+  opacity: .9;
+  transform: rotate(-1.2deg);
+  transform-origin: left center;
+  transition: transform .75s cubic-bezier(.55, .1, .3, 1) .5s;
+}
+.js .reveal:not(.is-visible) h2 mark::before { transform: rotate(-1.2deg) scaleX(0); }
+
+/* cartões de dados com ícone */
+.fact {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--o50);
+  border: 1px solid var(--o200);
+  box-shadow: 0 8px 20px -12px rgba(18, 58, 85, .25);
+}
+.fact-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+.fact-icon .ic-line { stroke: var(--navy); }
+.fact-icon .ic-dots { stroke: var(--navy); stroke-width: 3; }
+.fact-icon .ic-panel { fill: var(--navy); stroke: var(--navy); stroke-width: 1.4; }
+.fact-icon .ic-accent { stroke: var(--burnt); }
+.fact-icon .ic-accent-fill { fill: var(--sun); stroke: var(--burnt); stroke-width: 1.4; }
+.fact-icon .ic-accent:only-child { stroke-width: 2.4; }
+.fact-text { min-width: 0; }
+.fact-label { display: block; font-size: .9rem; line-height: 1.3; }
+.fact-value { display: block; margin-top: 2px; font-size: 1.3rem; font-weight: 700; line-height: 1.2; }
+.fact-value small { font-size: .8em; font-weight: 700; }
+
+/* antes → depois: as duas contas ligadas por uma seta */
+.case-bills {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 8px;
 }
 .case-facts {
   list-style: none;
-  margin: 28px 0 0;
+  margin: 12px 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
 }
-.case-facts li {
-  padding: 16px 18px;
-  border-radius: 16px;
-  background: var(--o100);
-  border-left: 4px solid var(--sun);
+.bill-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.case-facts li:last-child { border-left-color: var(--burnt); }
-.fact-label { display: block; font-size: .9rem; line-height: 1.3; }
-.fact-value { display: block; margin-top: 4px; font-size: 1.35rem; font-weight: 700; line-height: 1.2; }
+.bill-arrow svg {
+  width: 40px;
+  height: 18px;
+  fill: none;
+  stroke: var(--burnt);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+.bill-arrow-line {
+  stroke-dasharray: 56;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset .7s ease .4s;
+}
+.bill-arrow-head { transition: opacity .3s ease 1s; }
+.js .reveal:not(.is-visible) .bill-arrow-line { stroke-dashoffset: 56; }
+.js .reveal:not(.is-visible) .bill-arrow-head { opacity: 0; }
 
+/* casa ilustrada em perspectiva (veio da hero) */
+.case-art { min-width: 0; position: relative; isolation: isolate; }
+.house { position: relative; }
+
+/* sol animado atrás da casa: raios girando e brilho pulsando */
+.case-sun {
+  position: absolute;
+  z-index: -1;
+  top: -15%;
+  right: 2%;
+  width: 42%;
+  height: auto;
+  aspect-ratio: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+.case-sun-rays {
+  stroke: var(--sun);
+  stroke-width: 6;
+  stroke-linecap: round;
+  animation: sun-spin 40s linear infinite;
+}
+.case-sun-rays .short { stroke-width: 4; opacity: .75; }
+.case-sun-glow {
+  transform-origin: center;
+  animation: sun-pulse 4s ease-in-out infinite;
+}
+@keyframes sun-spin { to { transform: rotate(360deg); } }
+@keyframes sun-pulse {
+  0%, 100% { transform: scale(.92); opacity: .8; }
+  50%      { transform: scale(1.06); opacity: 1; }
+}
+
+.house {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1190 / 1100;
+  overflow: visible;
+}
+.house .lit { opacity: var(--lights); }
+/* reflexo que varre os painéis solares */
+.house .glint { animation: glint 6s linear infinite; }
+@keyframes glint {
+  from { transform: translateX(-500px); }
+  to   { transform: translateX(1000px); }
+}
+
+/* painel: gráfico de barras | economia mensal, com a economia anual embaixo */
 .chart {
   margin: 0;
-  padding: clamp(20px, 3vw, 32px);
-  border-radius: 24px;
-  background: var(--o100);
-}
-.chart-title { font-weight: 700; font-size: 1rem; margin-bottom: 20px; }
-.chart-plot {
-  position: relative;
-  height: clamp(260px, 32vw, 340px);
+  padding: clamp(18px, 2.4vw, 24px);
+  border-radius: 20px;
+  background: var(--o50);
+  border: 1px solid var(--o200);
+  box-shadow: 0 10px 24px -14px rgba(18, 58, 85, .28);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(20px, 5vw, 56px);
-  padding: 0 clamp(8px, 3vw, 32px);
-  border-bottom: 2px solid var(--navy);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "main saving" "note note";
+  column-gap: 28px;
+  row-gap: 16px;
 }
-.chart-col {
-  position: relative;
+.chart-main { grid-area: main; min-width: 0; }
+.chart-title {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
-  height: 100%;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 16px;
 }
-.chart-value { font-weight: 700; font-size: clamp(1.1rem, 1rem + .6vw, 1.5rem); margin-bottom: 8px; }
-/* altura da barra cheia = coluna menos o espaço do valor (≈ 42px) */
+.chart-title span { font-weight: 400; }
+.chart-title svg { width: 18px; height: 18px; fill: var(--sun); flex: none; }
+.chart-rows { display: grid; gap: 14px; }
+.chart-row {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr) 4rem;
+  align-items: center;
+  column-gap: 10px;
+}
+.chart-label { font-weight: 700; line-height: 1.2; }
+.chart-label small { display: block; font-weight: 400; font-size: .78rem; }
+.chart-track { height: 26px; }
 .chart-bar {
-  width: min(100%, 120px);
-  border-radius: 12px 12px 0 0;
-  transform-origin: bottom;
+  height: 100%;
+  border-radius: 8px;
+  transform-origin: left;
   transition: transform 1s cubic-bezier(.2, .7, .2, 1);
 }
-.chart-bar.is-before { background: var(--navy); height: calc(100% - 42px); }
+.chart-bar.is-before { width: 100%; background: var(--navy); }
 /* 118 / 780 = 15,13% */
-.chart-bar.is-after  { background: var(--sun); height: calc((100% - 42px) * .1513); min-height: 10px; transition-delay: .25s; }
-.js .chart:not(.is-visible) .chart-bar { transform: scaleY(0); }
-.chart-label {
-  position: absolute;
-  top: calc(100% + 10px);
-  text-align: center;
+.chart-bar.is-after { width: 15.13%; min-width: 14px; background: var(--burnt); transition-delay: .25s; }
+.js .chart:not(.is-visible) .chart-bar { transform: scaleX(0); }
+.chart-value {
   font-weight: 700;
-  line-height: 1.2;
+  font-size: 1.1rem;
+  text-align: right;
+  white-space: nowrap;
 }
-.chart-label small { display: block; font-weight: 400; font-size: .8rem; }
-.chart-badge {
+
+/* cartão do cofrinho, separado do gráfico por uma linha */
+.chart-saving {
+  grid-area: saving;
+  align-self: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 14px 12px;
+  border-radius: 16px;
+  background: var(--o100);
+}
+.chart-saving::before {
+  content: "";
   position: absolute;
-  right: clamp(4px, 2vw, 20px);
-  top: 38%;
-  padding: 6px 12px;
+  left: -14px;
+  top: -8px;
+  bottom: -8px;
+  border-left: 1px solid var(--o200);
+}
+.chart-saving p { margin: 0; font-size: .95rem; line-height: 1.2; }
+.chart-saving strong { display: block; margin: 2px 0; font-size: 1.6rem; white-space: nowrap; line-height: 1.1; }
+.piggy { width: 44px; height: auto; flex: none; overflow: visible; }
+.piggy-body { fill: var(--o200); stroke: var(--navy); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.piggy-eye { fill: var(--navy); }
+.piggy-slot { stroke: var(--navy); stroke-width: 2.4; stroke-linecap: round; }
+.piggy-coin { fill: var(--sun); stroke: var(--burnt); stroke-width: 1.6; }
+.piggy-coin-mark { fill: none; stroke: var(--navy); stroke-width: 1.6; stroke-linecap: round; }
+/* largura fixa para o cartão não "pular" enquanto o número sobe */
+.chart-saving .count { display: inline-block; min-width: 5.6ch; font-variant-numeric: tabular-nums; }
+
+/* moedas caindo no cofrinho (em sincronia com a contagem do script.js) */
+.coin-drop { opacity: 0; }
+.piggy-pig { transform-box: fill-box; transform-origin: 50% 100%; }
+.js .chart:not(.is-visible) .coin-rest { opacity: 0; }
+.chart.is-visible .coin-drop { animation: coin-fall .65s cubic-bezier(.5, 0, .9, .6) both; }
+.chart.is-visible .coin-drop.d1 { animation-delay: .3s; }
+.chart.is-visible .coin-drop.d2 { animation-delay: 1s; }
+.chart.is-visible .coin-drop.d3 { animation-delay: 1.7s; }
+.chart.is-visible .piggy-pig { animation: piggy-bump .35s ease-out .9s, piggy-bump .35s ease-out 1.6s, piggy-bump .35s ease-out 2.3s; }
+.chart.is-visible .coin-rest { animation: coin-rest .5s ease-out 2.5s both; }
+@keyframes coin-fall {
+  0%   { transform: translate(30px, -24px); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { transform: translate(30px, 20px); opacity: 1; }
+  100% { transform: translate(30px, 28px) scale(.7); opacity: 0; }
+}
+@keyframes piggy-bump {
+  40% { transform: scale(1.06, .94); }
+}
+@keyframes coin-rest {
+  from { opacity: 0; transform: translate(34px, -6px); }
+  to   { opacity: 1; transform: translate(34px, 9px); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* economia anual */
+.chart-note {
+  grid-area: note;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 !important;
+  padding: 6px 14px 6px 8px;
   border-radius: 999px;
-  background: var(--o200);
-  border: 2px solid var(--burnt);
-  font-weight: 700;
-  font-size: 1.05rem;
+  background: var(--o100);
+  font-size: .9rem;
 }
-.chart-note { margin-top: 56px !important; font-size: 1rem; }
+.chart-note svg { width: 20px; height: 20px; flex: none; }
+.chart-note svg circle { fill: var(--burnt); }
+.chart-note svg path { fill: none; stroke: var(--o50); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ---------------- 4.5 Dados gerais ---------------- */
 .stats {
   background: var(--o100);
   border-block: 1px solid var(--o200);
-  padding-block: clamp(40px, 6vw, 64px);
+  padding-block: var(--space-band);
 }
 .stats-list {
   list-style: none;
@@ -454,7 +704,7 @@ body {
 
 /* ---------------- 4.6 Retorno financeiro ---------------- */
 .payback {
-  margin-bottom: clamp(36px, 5vw, 56px);
+  margin-bottom: var(--space-head);
   padding: clamp(20px, 3vw, 32px) clamp(20px, 3vw, 36px) clamp(24px, 3vw, 32px);
   border-radius: 24px;
   background: var(--o100);
@@ -590,7 +840,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: clamp(28px, 4vw, 40px) !important;
+  margin-top: var(--space-head) !important;
   font-size: 1.05rem;
 }
 .warranty-proof svg {
@@ -770,12 +1020,22 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .js .reveal, .chart-bar, .payback-return { transition: none; }
   .js .reveal { opacity: 1; transform: none; }
+  .house .glint { animation: none; opacity: 0; }
+  .case-sun-rays, .case-sun-glow { animation: none; }
+  .bill-arrow-line, .bill-arrow-head { transition: none; }
+  .js .reveal:not(.is-visible) .bill-arrow-line { stroke-dashoffset: 0; }
+  .js .reveal:not(.is-visible) .bill-arrow-head { opacity: 1; }
+  .case h2 mark::before { transition: none; }
+  .chart.is-visible .coin-drop, .chart.is-visible .piggy-pig, .chart.is-visible .coin-rest { animation: none; }
+  .js .chart:not(.is-visible) .coin-rest { opacity: 1; }
+  .js .reveal:not(.is-visible) h2 mark::before { transform: rotate(-1.2deg); }
   .js .chart:not(.is-visible) .chart-bar,
   .js .payback:not(.is-visible) .payback-return { transform: none; }
 }
 
 /* ---------- tablet ---------- */
 @media (max-width: 899px) {
+  :root { --space-section: 48px; --space-band: 36px; --space-head: 28px; }
   .case-grid, .system-grid, .sim-grid { grid-template-columns: minmax(0, 1fr); }
   .cards, .warranty-list { grid-template-columns: minmax(0, 1fr); max-width: 620px; margin-inline: auto; }
   .warranty-tag { position: static; display: inline-block; margin-bottom: 12px; }
@@ -783,7 +1043,18 @@ body {
 
 /* ---------- celular ---------- */
 @media (max-width: 699px) {
+  :root { --space-section: 40px; --space-band: 32px; --space-head: 24px; }
   .case-facts { grid-template-columns: minmax(0, 1fr); }
+  /* no celular as contas ficam uma embaixo da outra, com a seta para baixo */
+  .case-bills { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .bill-arrow { flex-direction: row; gap: 12px; }
+  .bill-arrow svg { width: 36px; transform: rotate(90deg); margin-block: 8px; }
+  .chart-row { grid-template-columns: 5.6rem minmax(0, 1fr) 4.2rem; column-gap: 10px; }
+  /* painel em uma coluna: gráfico, cofrinho, economia anual */
+  .chart { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "saving" "note"; }
+  .chart-saving { align-self: stretch; justify-content: center; }
+  .chart-saving::before { display: none; }
+  .chart-note { border-radius: 14px; }
   .stats-list { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .stat { padding-block: 18px; }
   .stat + .stat { border-left: 0; border-top: 1px solid var(--o200); }
