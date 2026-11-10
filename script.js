@@ -231,3 +231,34 @@
     if (!out.ok) throw new Error('Apps Script recusou: ' + out.erro);
   }
 })();
+
+/* =========================================================
+   Mapa "Onde atendemos": cidade selecionada no mapa ou na lista
+   ========================================================= */
+(function () {
+  const area = document.getElementById('area');
+  if (!area) return;
+  const status = document.getElementById('area-status');
+  const items = area.querySelectorAll('.area-item');
+  const sede = '<strong>Sorocaba</strong> · sede da Ravena Solar';
+  let current = null;
+
+  function select(n) {
+    current = current === n ? null : n;
+    area.querySelectorAll('.area-city, .area-pin').forEach((el) => {
+      el.classList.toggle('is-active', el.dataset.city === current);
+    });
+    items.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.city === current)));
+    const btn = current && area.querySelector('.area-item[data-city="' + current + '"]');
+    if (!btn) { status.innerHTML = sede; return; }
+    const name = btn.lastChild.textContent.trim();
+    status.innerHTML = current === '1'
+      ? sede
+      : '<strong>' + name + '</strong> · ' + btn.dataset.km + '&nbsp;km da sede em Sorocaba';
+  }
+
+  items.forEach((b) => b.addEventListener('click', () => select(b.dataset.city)));
+  area.querySelectorAll('.area-city, .area-pin').forEach((el) => {
+    el.addEventListener('click', () => select(el.dataset.city));
+  });
+})();

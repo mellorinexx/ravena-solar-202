@@ -983,10 +983,14 @@ body {
 }
 .sim-grid {
   display: grid;
-  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-  gap: clamp(32px, 6vw, 80px);
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(32px, 4vw, 56px);
+  row-gap: var(--space-head);
+  align-items: stretch;
 }
+/* título e avisos ocupam a largura toda; mapa e formulário ficam lado a lado, mesma altura */
+.sim-head { grid-column: 1 / -1; }
+.sim-head .checklist { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px 32px; }
 .checklist { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 14px; }
 .checklist li { position: relative; padding-left: 34px; line-height: 1.5; }
 .checklist li::before {
@@ -998,6 +1002,150 @@ body {
   height: 22px;
   border-radius: 50%;
   background: var(--sun) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23123A55' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+
+/* mapa animado das cidades atendidas (à esquerda do formulário) */
+.area {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 2vw, 22px);
+  border-radius: 24px;
+  background: var(--o50);
+  border: 1px solid var(--o200);
+  box-shadow: 0 24px 60px -34px rgba(18, 58, 85, .3);
+}
+.area-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.area-head h3 { margin: 0; font-size: 1.1rem; }
+.area-status { margin: 0; font-size: .92rem; }
+.area-status strong { font-weight: 700; }
+.area-stage {
+  position: relative;
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  margin-top: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 40% 45%, #fff 0%, var(--o50) 70%);
+  box-shadow: inset 0 0 0 1px var(--o200);
+}
+.area-map { display: block; width: 100%; height: auto; }
+/* lado a lado: o formulário define a altura e o mapa ocupa o espaço que sobra */
+@media (min-width: 900px) {
+  .area-stage { flex: 1 1 0; min-height: 280px; }
+  .area-map { position: absolute; inset: 0; height: 100%; }
+}
+.area-mini {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: clamp(54px, 18%, 84px);
+  height: auto;
+  padding: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .85);
+  box-shadow: inset 0 0 0 1px var(--o200);
+}
+.area-mini path { fill: var(--o100); stroke: var(--navy); stroke-width: 2; stroke-linejoin: round; stroke-opacity: .55; }
+.area-mini rect { fill: rgba(232, 114, 28, .25); stroke: var(--burnt); stroke-width: 3; }
+
+.area-mesh path { fill: #fff; stroke: var(--navy); stroke-opacity: .16; stroke-width: 1; stroke-linejoin: round; }
+.area-city {
+  fill: var(--o200);
+  stroke: var(--navy);
+  stroke-opacity: .45;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill .5s ease calc(var(--i) * 90ms), stroke-opacity .3s ease;
+}
+.area-city.is-sede { fill: var(--sun); }
+.area-city:hover, .area-city.is-active { fill: var(--sun); stroke-opacity: .9; transition-delay: 0s; }
+.area-city.is-sede.is-active, .area-city.is-sede:hover { fill: var(--burnt); }
+
+.area-pin { cursor: pointer; }
+.area-pin-body { transition: opacity .35s ease calc(.25s + var(--i) * 90ms), transform .55s cubic-bezier(.34, 1.56, .64, 1) calc(.25s + var(--i) * 90ms); }
+.area-pin-shadow { fill: var(--navy); opacity: .22; transform-box: fill-box; transform-origin: center; }
+.area-pin-drop { fill: var(--burnt); stroke: #fff; stroke-width: 2.4; transition: fill .25s ease; }
+.area-pin.is-sede .area-pin-drop { fill: var(--navy); }
+.area-pin.is-active .area-pin-drop { fill: var(--sun); }
+.area-pin text { fill: #fff; font: 700 17px var(--font); text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.area-pin.is-active text { fill: var(--navy); }
+.area-pin-float { transition: transform .25s ease; }
+.area-pin.is-active .area-pin-float { transform: translateY(-4px) scale(1.18); }
+
+/* pulso da sede */
+.area-pulse { fill: none; stroke: var(--burnt); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.area.is-visible .area-pulse { animation: area-pulse 2.6s ease-out 1.6s infinite; }
+.area.is-visible .area-pulse + .area-pulse { animation-delay: 2.9s; }
+@keyframes area-pulse {
+  0% { opacity: .7; transform: scale(.2); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* pinos flutuando depois de pousar */
+.area.is-visible .area-pin-float { animation: area-float 3s ease-in-out calc(1.4s + var(--i) * 180ms) infinite; }
+.area.is-visible .area-pin-shadow { animation: area-shadow 3s ease-in-out calc(1.4s + var(--i) * 180ms) infinite; }
+.area.is-visible .area-pin.is-active .area-pin-float { animation: none; }
+@keyframes area-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+@keyframes area-shadow { 0%, 100% { opacity: .22; scale: 1; } 50% { opacity: .12; scale: .65; } }
+
+/* estado inicial (antes de aparecer na tela) */
+.js .area:not(.is-visible) .area-city { fill: #fff; }
+.js .area:not(.is-visible) .area-pin-body { opacity: 0; transform: translateY(-26px); }
+.js .area:not(.is-visible) .area-item { opacity: 0; transform: translateY(8px); }
+
+.area-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(132px, 100%), 1fr));
+  gap: 4px 8px;
+}
+.area-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 4px 10px 4px 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--navy);
+  font: 400 .92rem/1.2 var(--font);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .2s ease, opacity .4s ease calc(.3s + var(--i) * 60ms), transform .4s ease calc(.3s + var(--i) * 60ms);
+}
+.area-item:hover { background: var(--o100); }
+.area-item[aria-pressed="true"] { background: var(--o200); font-weight: 700; }
+.area-item:focus-visible { outline: 2px solid var(--burnt); outline-offset: 2px; }
+.area-num {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--burnt);
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+}
+.area-item[data-city="1"] .area-num { background: var(--navy); }
+.area-note { margin: 10px 0 0; font-size: .85rem; line-height: 1.45; }
+
+@media (prefers-reduced-motion: reduce) {
+  .area-city, .area-pin-body, .area-item { transition: none; }
+  .area.is-visible .area-pulse,
+  .area.is-visible .area-pin-float,
+  .area.is-visible .area-pin-shadow { animation: none; }
+  .js .area:not(.is-visible) .area-city { fill: var(--o200); }
+  .js .area:not(.is-visible) .area-pin-body,
+  .js .area:not(.is-visible) .area-item { opacity: 1; transform: none; }
 }
 
 .sim-card {
