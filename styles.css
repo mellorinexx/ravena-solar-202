@@ -708,68 +708,186 @@ body {
 .stat-text { display: block; margin-top: 6px; font-size: 1rem; line-height: 1.35; }
 
 /* ---------------- 4.6 Retorno financeiro ---------------- */
+.money {
+  background:
+    radial-gradient(ellipse 55% 60% at 100% 0%, var(--o100), transparent 70%),
+    var(--o50);
+}
+/* grifo em "economiza", no mesmo traço do Caso real */
+.money h2 mark {
+  position: relative;
+  isolation: isolate;
+  color: inherit;
+  background: none;
+  padding: 0 .06em;
+  white-space: nowrap;
+}
+.money h2 mark::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -.02em;
+  right: -.06em;
+  bottom: .06em;
+  height: .42em;
+  border-radius: .12em .3em .18em .26em;
+  background: var(--sun);
+  opacity: .9;
+  transform: rotate(-1.2deg);
+  transform-origin: left center;
+  transition: transform .75s cubic-bezier(.55, .1, .3, 1) .5s;
+}
+
+/* painel claro com a linha do tempo */
 .payback {
   margin-bottom: var(--space-head);
-  padding: clamp(20px, 3vw, 32px) clamp(20px, 3vw, 36px) clamp(24px, 3vw, 32px);
+  padding: clamp(22px, 3vw, 30px) clamp(22px, 3.4vw, 40px) clamp(20px, 2.6vw, 26px);
   border-radius: 24px;
-  background: var(--o100);
+  background: var(--o50);
+  border: 1px solid var(--o200);
+  box-shadow: 0 14px 34px -22px rgba(18, 58, 85, .35);
 }
 .payback-track {
   position: relative;
-  height: 18px;
+  height: 8px;
+  margin-inline: 6px;
   border-radius: 999px;
   background: var(--o200);
-  overflow: hidden;
 }
-/* 0 → 4 anos de 25 = 16% */
+/* 0 → 3,5 anos de 25 = 14% */
 .payback-return {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 16%;
+  width: 14%;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--sun), var(--burnt));
   transform-origin: left;
   transition: transform 1.2s cubic-bezier(.2, .7, .2, 1) .2s;
 }
+.payback-dot {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.payback-dot-start { left: 0; background: var(--sun); }
+.payback-dot-end { left: 100%; background: var(--o200); box-shadow: 0 0 0 3px var(--o50), 0 0 0 4px var(--o200); }
+/* marcador no ponto de retorno, com halo */
+.payback-knob {
+  position: absolute;
+  top: 50%;
+  left: 14%;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--sun), var(--burnt) 70%);
+  box-shadow: 0 0 0 6px rgba(242, 160, 61, .25), 0 4px 10px -2px rgba(232, 114, 28, .55);
+  transform: translate(-50%, -50%);
+  transition: left 1.2s cubic-bezier(.2, .7, .2, 1) .2s, opacity .3s ease .2s;
+}
 .js .payback:not(.is-visible) .payback-return { transform: scaleX(0); }
+.js .payback:not(.is-visible) .payback-knob { left: 0; opacity: 0; }
+.payback.is-visible .payback-knob { animation: knob-pulse 2.6s ease-in-out 1.6s infinite; }
+@keyframes knob-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(242, 160, 61, .25), 0 4px 10px -2px rgba(232, 114, 28, .55); }
+  50%      { box-shadow: 0 0 0 11px rgba(242, 160, 61, .12), 0 4px 10px -2px rgba(232, 114, 28, .55); }
+}
 .payback-marks {
   position: relative;
-  height: 64px;
-  margin-top: 12px;
+  height: 52px;
+  margin-top: 18px;
 }
-.pm { position: absolute; top: 0; font-size: .95rem; line-height: 1.3; }
+.pm { position: absolute; top: 0; font-size: .85rem; line-height: 1.3; }
 .pm strong { display: block; font-size: 1.15rem; }
-.pm-start { left: 0; }
-.pm-return { left: 14%; }
+.pm-start { left: 0; top: 10px; font-size: .95rem; }
+/* texto começa embaixo do marcador e corre para a direita, sem encostar em "Instalação" */
+.pm-return { left: 14%; transform: translateX(-12px); white-space: nowrap; }
 .pm-end { right: 0; text-align: right; }
-.pm-return::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: -26px;
-  width: 3px;
-  height: 22px;
-  background: var(--navy);
-  border-radius: 2px;
-}
 
+/* cartões: ícone + título em linha, número em destaque */
 .cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(16px, 2vw, 24px);
 }
 .card {
-  padding: clamp(22px, 2.5vw, 32px);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(20px, 2.4vw, 28px);
   border-radius: 24px;
+  background: var(--o50);
+  border: 1px solid var(--o200);
+  box-shadow: 0 14px 34px -22px rgba(18, 58, 85, .35);
+}
+/* canto superior com um leve brilho laranja-claro */
+.card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -140px;
+  right: -140px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  /* várias paradas para o brilho sumir aos poucos, sem borda visível */
+  background: radial-gradient(circle closest-side,
+    rgba(251, 221, 184, .55) 0%,
+    rgba(251, 221, 184, .38) 25%,
+    rgba(251, 221, 184, .2) 50%,
+    rgba(251, 221, 184, .07) 75%,
+    rgba(251, 221, 184, 0) 100%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.card-top h3 { margin: 0; font-size: 1.1rem; }
+.card-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
   background: var(--o100);
   border: 1px solid var(--o200);
 }
-.card-icon, .spec-icon {
+.card-icon svg {
+  width: 40px;
+  height: 40px;
+  overflow: visible;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.card-icon .i-soft { fill: var(--o200); stroke: none; }
+.card-icon .i-line { fill: none; stroke: var(--navy); stroke-width: 2.2; }
+.card-icon .i-coin { fill: var(--sun); stroke: var(--burnt); stroke-width: 1.8; }
+.card-icon .i-mark { fill: none; stroke: var(--navy); stroke-width: 1.8; }
+.card-icon .i-dot { fill: var(--navy); }
+.card:hover .card-icon svg { animation: icon-bob .6s ease-out; }
+@keyframes icon-bob {
+  40% { transform: translateY(-3px) rotate(-4deg); }
+}
+.card-big {
+  font-size: clamp(1.3rem, 1.1rem + .5vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 12px !important;
+}
+.card p:not(.card-big) { line-height: 1.55; }
+
+.spec-icon {
   display: block;
   width: 44px;
   height: 44px;
   padding: 9px;
-  margin-bottom: 18px;
   border-radius: 12px;
   background: var(--o200);
   fill: none;
@@ -778,8 +896,6 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.card-big { font-size: 1.4rem; font-weight: 700; line-height: 1.2; margin-bottom: 12px !important; }
-.card p:not(.card-big) { line-height: 1.55; }
 
 /* ---------------- 4.7 Sistema ---------------- */
 .system { background: var(--o100); }
@@ -1030,7 +1146,10 @@ body {
   .bill-arrow-line, .bill-arrow-head { transition: none; }
   .js .reveal:not(.is-visible) .bill-arrow-line { stroke-dashoffset: 0; }
   .js .reveal:not(.is-visible) .bill-arrow-head { opacity: 1; }
-  .case h2 mark::before { transition: none; }
+  .case h2 mark::before, .money h2 mark::before { transition: none; }
+  .payback-knob { transition: none; }
+  .payback.is-visible .payback-knob, .card:hover .card-icon svg { animation: none; }
+  .js .payback:not(.is-visible) .payback-knob { left: 14%; opacity: 1; }
   .stat.is-visible .stat-star { animation: none; }
   .chart.is-visible .coin-drop, .chart.is-visible .piggy-pig, .chart.is-visible .coin-rest { animation: none; }
   .js .chart:not(.is-visible) .coin-rest { opacity: 1; }
@@ -1045,6 +1164,8 @@ body {
   .case-grid, .system-grid, .sim-grid { grid-template-columns: minmax(0, 1fr); }
   .cards, .warranty-list { grid-template-columns: minmax(0, 1fr); max-width: 620px; margin-inline: auto; }
   .warranty-tag { position: static; display: inline-block; margin-bottom: 12px; }
+  /* sem espaço para "Instalação" ao lado do marcador; o ponto inicial já indica o começo */
+  .pm-start { display: none; }
 }
 
 /* ---------- celular ---------- */
@@ -1064,11 +1185,11 @@ body {
   .stats-list { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .stat { padding-block: 18px; }
   .stat + .stat { border-left: 0; border-top: 1px solid var(--o200); }
-  .pm { font-size: .85rem; }
+  .pm { font-size: .8rem; }
   .pm strong { font-size: 1rem; }
   .pm-start { display: none; }
   .payback-marks { height: auto; display: flex; justify-content: space-between; gap: 16px; }
-  .pm { position: static; }
-  .pm-return::before { display: none; }
+  .pm { position: static; transform: none; white-space: normal; }
+  .pm-return { text-align: left; }
   .footer-grid { flex-direction: column; align-items: flex-start; }
 }
