@@ -6,23 +6,47 @@
 (function () {
   document.documentElement.classList.add('js');
 
-  /* ---------- contagem de valores (.count[data-count]) ----------
-     Sobe de R$ 0 até o valor junto com as moedas que caem no cofrinho
-     (styles.css: .coin-drop). Sem animação se o sistema pedir menos movimento. */
+  /* ---------- contagem de valores ([data-count]) ----------
+     Sobe de 0 até o valor quando o bloco aparece na tela.
+     Opções: data-prefix ("R$ "), data-decimals (4,8 → 1),
+     data-delay e data-duration em ms. O cofrinho usa o mesmo tempo
+     das três moedas (styles.css: .coin-drop).
+     Sem animação se o sistema pedir menos movimento. */
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const money = (n) => 'R$ ' + n.toLocaleString('pt-BR');
-  const counters = reduceMotion ? [] : document.querySelectorAll('.count[data-count]');
-  counters.forEach((el) => { el.textContent = money(0); });
+
+  function formatCount(el, n) {
+    const dec = Number(el.dataset.decimals || 0);
+    const prefix = (el.dataset.prefix || '').replace(' ', ' ');
+    return prefix + n.toLocaleString('pt-BR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+
+  const counters = reduceMotion ? [] : document.querySelectorAll('[data-count]');
+  counters.forEach((el) => {
+    const final = formatCount(el, Number(el.dataset.count));
+    // leitor de tela ouve só o valor final, nunca a contagem
+    if (!el.hasAttribute('aria-hidden')) {
+      const sr = document.createElement('span');
+      sr.className = 'sr-only';
+      sr.textContent = final;
+      el.after(sr);
+      el.setAttribute('aria-hidden', 'true');
+    }
+    // largura do valor final reservada desde o início: o texto não "pula"
+    el.style.display = 'inline-block';
+    el.style.minWidth = final.length + 'ch';
+    el.textContent = formatCount(el, 0);
+  });
 
   function runCount(el) {
     const target = Number(el.dataset.count);
-    const delay = 300, duration = 2200;   // mesmo tempo das três moedas
+    const delay = Number(el.dataset.delay || 0);
+    const duration = Number(el.dataset.duration || 1600);
     let start = null;
     const step = (t) => {
       if (start === null) start = t + delay;
       const p = Math.min(Math.max((t - start) / duration, 0), 1);
       const eased = 1 - Math.pow(1 - p, 2);   // desacelera no fim, sem chegar cedo demais
-      el.textContent = money(Math.round(target * eased));
+      el.textContent = formatCount(el, target * eased);
       if (p < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
@@ -30,7 +54,7 @@
 
   function show(el) {
     el.classList.add('is-visible');
-    if (!reduceMotion) el.querySelectorAll('.count[data-count]').forEach(runCount);
+    if (!reduceMotion) el.querySelectorAll('[data-count]').forEach(runCount);
   }
 
   /* ---------- revelação ao rolar ---------- */
