@@ -32,7 +32,10 @@ html { scroll-behavior: smooth; }
 
 /* a logo leva a #topo: desconta o cabeçalho fixo para a rolagem voltar
    ao início de verdade, sem esconder o título da hero atrás dele */
-#topo { scroll-margin-top: var(--header-h); }
+#topo,
+#caso-real,
+#sistema,
+#garantia { scroll-margin-top: var(--header-h); }
 
 body {
   margin: 0;
@@ -59,6 +62,52 @@ body {
 }
 .brand img { display: block; height: 44px; width: auto; }
 
+/* navegação: tópicos em texto + CTA em pílula laranja */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2.4vw, 36px);
+}
+.nav-link {
+  color: var(--navy);
+  font-size: 1rem;
+  font-weight: 400;
+  text-decoration: none;
+  padding: 8px 0;
+  background: linear-gradient(var(--sun), var(--sun)) no-repeat left 88% / 0 2px;
+  transition: background-size .25s ease;
+}
+.nav-link:hover { background-size: 100% 2px; }
+
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--sun);
+  color: var(--navy);
+  font-size: .95rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.header-cta svg {
+  width: 1.1em;
+  height: 1.1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s ease;
+}
+.header-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -8px rgba(18, 58, 85, .45); }
+.header-cta:hover svg { transform: translateX(3px); }
+
+/* link sublinhado do rodapé (antes era o link do cabeçalho) */
 .header-link {
   color: var(--navy);
   font-weight: 700;
@@ -69,34 +118,38 @@ body {
   transition: background-size .25s ease;
 }
 .header-link:hover { background-size: 100% 6px; }
+.header-link:focus-visible { outline: 3px solid var(--navy); outline-offset: 4px; }
 
 /* ---------------- Hero ----------------
-   Fundo em três tempos, da esquerda para a direita:
-   Laranja 50 sólido → faixa translúcida → foto da família.
-   Texto à esquerda, sobre o trecho sólido; a frase da Ravena
-   fica num cartão translúcido junto da família, na foto.
+   Laranja 100 sólido à esquerda, foto da família à direita.
+   A divisa é uma curva de cor sólida (SVG .hero-curve), sem
+   translucidez. A frase da Ravena fecha o bloco de texto como
+   assinatura, com ícone de casa, em vez de cartão sobre a foto.
    Em telas estreitas (< 900px) o texto fica em cima e a foto
-   embaixo, com a mesma transição na vertical.
+   embaixo, com a curva na borda de cima da foto.
    ------------------------------------------------------------- */
 .hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  height: calc(100svh - var(--header-h));
-  min-height: 540px;
+  /* altura mínima = tela útil; se o conteúdo precisar de mais, a hero cresce
+     em vez de cortar o texto (overflow só segura a foto) */
+  min-height: calc(100svh - var(--header-h));
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  align-items: start;   /* texto perto do topo, não no meio */
-  padding: clamp(28px, 7svh, 80px) clamp(16px, 5vw, 80px) clamp(24px, 4svh, 48px);
-  background: var(--o50);
+  grid-template-rows: auto;
+  align-items: center;
+  padding: clamp(20px, 5svh, 64px) clamp(16px, 5vw, 80px) clamp(16px, 4svh, 48px);
+  /* Laranja 100: o mesmo tom do topo da seção seguinte (Caso real),
+     para a passagem da hero para ela não ter emenda */
+  background: var(--o100);
 }
 
 /* foto: ocupa a direita e entra por baixo da transição */
 .hero-photo {
   position: absolute;
   z-index: -1;
-  inset: 0 0 0 40%;
+  inset: 0 0 0 44%;
 }
 .hero-photo img {
   display: block;
@@ -105,18 +158,16 @@ body {
   object-fit: cover;
   object-position: 48% 70%;
 }
-/* sólido → translúcido → imagem */
-.hero-photo::before {
-  content: "";
+/* divisa curva, em Laranja 100 sólido (mesma cor do fundo do texto) */
+.hero-curve {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to right,
-    var(--o50) 0%,
-    rgba(var(--o50-rgb), .88) 8%,
-    rgba(var(--o50-rgb), .55) 18%,
-    rgba(var(--o50-rgb), .2) 27%,
-    rgba(var(--o50-rgb), 0) 36%);
+  inset: -1px auto -1px -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  fill: var(--o100);
+  pointer-events: none;
 }
+.hero-curve-top { display: none; }
 
 /* texto (coluna esquerda) */
 .hero-copy {
@@ -124,35 +175,33 @@ body {
   text-align: left;
 }
 
-/* frase ligada à família da foto */
+/* assinatura da Ravena: separada da nota por um fio fino, com ícone
+   de casa em selo Laranja 100; continua o texto, não flutua na foto */
 .hero-family {
-  position: absolute;
-  right: clamp(16px, 3.5vw, 56px);
-  bottom: clamp(16px, 4svh, 44px);
-  width: min(32rem, 44vw);   /* mais largo: a frase cabe em 2 linhas */
-  margin: 0;
-  padding: 18px 28px 18px 26px;
-  border-radius: 18px;
-  border-left: 4px solid var(--burnt);
-  background: rgba(var(--o50-rgb), .9);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 18px 40px -18px rgba(18, 58, 85, .45);
-  font-size: clamp(1rem, .85rem + .45vw, 1.2rem);
-  line-height: 1.38;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 30rem;
+  margin: clamp(16px, 3svh, 28px) 0 0;
+  padding-top: clamp(14px, 2.4svh, 22px);
+  border-top: 1px solid var(--o200);
+  font-size: clamp(.95rem, .8rem + .35vw, 1.08rem);
+  line-height: 1.4;
+  text-align: left;
   text-wrap: pretty;
-  transition: box-shadow .35s ease, transform .35s ease;
 }
-/* ao passar o mouse: a sombra cresce e o cartão sobe um pouco */
-.hero-family:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 30px 60px -22px rgba(18, 58, 85, .6),
-    0 10px 24px -12px rgba(18, 58, 85, .35);
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-family { transition: box-shadow .35s ease; }
-  .hero-family:hover { transform: none; }
+.hero-family-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border-radius: 50%;
+  background: var(--o200);
+  fill: none;
+  stroke: var(--burnt);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .hero-family strong {
   font-weight: 700;
@@ -162,7 +211,9 @@ body {
 /* tipografia: Helvetica (DESIGN.md), 700 nos títulos */
 .hero h1 {
   margin: 0 0 .45em;
-  font-size: clamp(2.2rem, calc(3.5vw + 2.6svh), 5.6rem);
+  /* acompanha a largura E a altura da janela: em telas baixas o título
+     encolhe e o bloco inteiro (até a assinatura) cabe na primeira tela */
+  font-size: clamp(2rem, min(4.6vw, 7.6svh), 5.2rem);
   line-height: 1.06;
   font-weight: 700;
   letter-spacing: .005em;
@@ -201,10 +252,16 @@ body {
 
 .hero-lead {
   margin: 0 0 1.3em;
-  font-size: clamp(1.1rem, calc(1vw + 1.1svh), 1.7rem);
+  font-size: clamp(1rem, min(1.6vw, 3.1svh), 1.5rem);
   line-height: 1.4;
 }
 .hero-lead strong { font-weight: 700; }
+/* no laptop a frase quebra antes da curva da foto */
+@media (min-width: 900px) {
+  .hero-lead { max-width: 22em; }
+  /* embaixo a curva avança para a esquerda: nota e assinatura ficam mais estreitas */
+  .hero-note, .hero-family { max-width: min(30rem, 38vw); }
+}
 
 .btn-primary {
   display: inline-flex;
@@ -237,7 +294,8 @@ body {
 .btn-primary:hover { transform: translateY(-2px); }
 .btn-primary:hover svg { transform: translateX(3px); }
 .btn-primary:focus-visible,
-.header-link:focus-visible {
+.nav-link:focus-visible,
+.header-cta:focus-visible {
   outline: 3px solid var(--navy);
   outline-offset: 4px;
 }
@@ -254,13 +312,13 @@ body {
     height: auto;
     min-height: calc(100svh - var(--header-h));
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(300px, 1fr);
-    padding: clamp(28px, 5svh, 56px) 16px 0;
+    grid-template-rows: auto minmax(260px, 1fr);
+    padding: clamp(24px, 4svh, 48px) 16px 0;
   }
   .hero-copy {
     justify-self: center;
     max-width: 640px;
-    padding-bottom: clamp(20px, 3svh, 32px);
+    padding-bottom: clamp(12px, 2svh, 24px);
     text-align: center;
   }
   .hero-photo {
@@ -273,23 +331,12 @@ body {
     margin-inline: -16px;
   }
   .hero-photo img { object-position: 47% 75%; }
-  .hero-photo::before {
-    background: linear-gradient(to bottom,
-      var(--o50) 0%,
-      rgba(var(--o50-rgb), .6) 10%,
-      rgba(var(--o50-rgb), 0) 26%);
-  }
+  /* curva na borda de cima da foto */
+  .hero-curve-side { display: none; }
+  .hero-curve-top { display: inline; }
   .hero-family {
-    position: relative;
-    z-index: 1;
-    right: auto;
-    bottom: auto;
-    grid-row: 2;
-    grid-column: 1;
-    align-self: end;
-    justify-self: center;
-    width: min(40rem, 100%);
-    margin-bottom: 16px;
+    display: inline-flex;
+    max-width: 34rem;
   }
   .hero h1 { font-size: clamp(1.8rem, calc(3.6vw + 1.8svh), 3.4rem); line-height: 1.1; }
   .hero-lead { font-size: clamp(1rem, 2.2vw, 1.25rem); text-wrap: balance; }
@@ -298,10 +345,12 @@ body {
 /* ---------- celular ---------- */
 @media (max-width: 699px) {
   .brand img { height: 36px; }
-  .header-link { font-size: .875rem; }
+  .nav-link { display: none; }
+  .header-cta { min-height: 40px; padding: 8px 16px; font-size: .875rem; }
   .btn-primary { width: 100%; padding: 14px 16px; }
   .hero-note { font-size: .9rem; text-wrap: balance; }
-  .hero-family { font-size: .98rem; padding: 12px 14px 12px 16px; }
+  .hero-family { gap: 12px; font-size: .92rem; }
+  .hero-family-icon { width: 38px; height: 38px; padding: 8px; }
 }
 
 /* =========================================================
@@ -345,9 +394,9 @@ body {
 
 /* ---------------- 4.3 / 4.4 Caso real: texto + gráfico | casa ---------------- */
 .case {
-  background:
-    radial-gradient(ellipse 60% 70% at 15% 0%, var(--o100), transparent 70%),
-    var(--o50);
+  /* começa exatamente no Laranja 100 da hero e clareia até o Laranja 50:
+     a passagem hero → Caso real fica contínua, sem linha nem salto de tom */
+  background: linear-gradient(to bottom, var(--o100) 0, var(--o50) min(560px, 60%));
 }
 .case-grid {
   display: grid;

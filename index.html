@@ -14,15 +14,28 @@
     <a class="brand" href="#topo" aria-label="Ravena Solar, início">
       <img src="logo.svg" alt="Ravena Solar" width="180" height="48">
     </a>
-    <a class="header-link" href="#simulacao">Fazer simulação</a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <a class="nav-link" href="#caso-real">Caso real</a>
+      <a class="nav-link" href="#sistema">Sistema</a>
+      <a class="nav-link" href="#garantia">Garantia</a>
+      <a class="header-cta" href="#simulacao">
+        Fazer simulação
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </nav>
   </header>
 
   <main id="topo">
     <!-- ============ HERO ============ -->
     <section class="hero" aria-labelledby="hero-title">
 
-      <!-- Fundo: Laranja 50 sólido → translúcido → foto da família -->
+      <!-- Fundo: Laranja 100 sólido com borda curva → foto da família -->
       <div class="hero-photo">
+        <svg class="hero-curve" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="hero-curve-side" d="M0 0H30C15 24 7 55 6 100H0Z"/>
+          <path class="hero-curve-top" d="M0 0H100V6C72 15 36 0 0 11Z"/>
+          <path class="hero-curve-bottom" d="M0 100V92C26 99 58 85 100 95V100Z"/>
+        </svg>
         <img
           src="img/familia-painel-solar-1800.jpg"
           srcset="img/familia-painel-solar-900.jpg 900w, img/familia-painel-solar-1800.jpg 1800w"
@@ -44,16 +57,20 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
         <p class="hero-note">Para residências com conta de luz acima de R$&nbsp;450 por mês.</p>
-      </div>
 
-      <!-- Frase ligada à foto da família -->
-      <p class="hero-family">
-        <strong>Ravena Solar</strong>, especialista em proporcionar mais qualidade de vida para você e sua família.
-      </p>
+        <!-- Assinatura da Ravena: fecha o bloco de texto, sem cartão solto sobre a foto -->
+        <p class="hero-family">
+          <svg class="hero-family-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M6 9.6V20h12V9.6"/>
+            <path d="M12 17.4s-3.3-1.9-3.3-4.1a1.7 1.7 0 0 1 3.3-.7 1.7 1.7 0 0 1 3.3.7c0 2.2-3.3 4.1-3.3 4.1Z"/>
+          </svg>
+          <span><strong>Ravena Solar</strong>, especialista em proporcionar mais qualidade de vida para você e sua família.</span>
+        </p>
+      </div>
     </section>
 
     <!-- ============ CASO REAL: TEXTO + GRÁFICO | CASA ============ -->
-    <section class="section case" aria-labelledby="case-title">
+    <section class="section case" id="caso-real" aria-labelledby="case-title">
       <div class="wrap case-grid">
         <div class="case-copy">
           <div class="reveal">
@@ -591,7 +608,7 @@
     </section>
 
     <!-- ============ INFORMAÇÕES DO SISTEMA ============ -->
-    <section class="section system" aria-labelledby="system-title">
+    <section class="section system" id="sistema" aria-labelledby="system-title">
       <div class="wrap system-grid">
         <div class="reveal">
           <p class="chip">
@@ -624,7 +641,7 @@
     </section>
 
     <!-- ============ GARANTIA ============ -->
-    <section class="section warranty" aria-labelledby="warranty-title">
+    <section class="section warranty" id="garantia" aria-labelledby="warranty-title">
       <div class="wrap">
         <div class="section-head reveal">
           <p class="chip">
