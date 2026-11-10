@@ -1026,7 +1026,6 @@ body {
 .rf-pv-body { fill: var(--navy); }
 .rf-pv-grid { fill: none; stroke: var(--o50); stroke-opacity: .55; stroke-width: 1.1; }
 .rf-glint { fill: #fff; opacity: 0; }
-.rf-leader { fill: none; stroke: var(--navy); stroke-width: 1.5; stroke-dasharray: 116; }
 .rf-leader-dot { fill: var(--sun); stroke: var(--o50); stroke-width: 2.5; transform-box: fill-box; transform-origin: center; }
 
 /* instalação: cada painel desce e assenta no trilho, de baixo para cima */
@@ -1048,25 +1047,40 @@ body {
   to       { opacity: 0; transform: skewX(-22deg) translateX(520px); }
 }
 
-/* "12 a 20 painéis": o texto termina na linha que desce até o conjunto (x = 443 de 640) */
+/* "12 a 20 painéis": o texto termina numa linha que desce até o ponto
+   laranja do conjunto (x = 443, y = 116 no SVG de 640 de largura).
+   A linha é um traço só (::after), da altura do texto + 116/640 da largura
+   do telhado (100cqw): não há emenda entre HTML e SVG para desalinhar. */
+.roof { container-type: inline-size; }
 .roof-count {
-  width: 69.22%;
+  position: relative;
+  width: calc(100% * 443 / 640);
   padding: 0 14px 10px 0;
-  border-right: 1.5px solid var(--navy);
   text-align: right;
   font-size: 1rem;
   line-height: 1.3;
-  transition: opacity .5s ease 1.9s, transform .5s ease 1.9s;
+  transition: opacity .5s ease 1.9s;
+}
+.roof-count::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.5px;
+  height: calc(100% + 100cqw * 116 / 640);
+  background: var(--navy);
+  transform: translateX(50%);
+  transform-origin: top;
+  transition: transform .5s ease 1.9s;
 }
 .roof-count strong {
   display: block;
   font-size: clamp(1.35rem, 1.1rem + .9vw, 1.85rem);
   line-height: 1.15;
 }
-.rf-leader { transition: stroke-dashoffset .45s ease 1.7s; }
 .rf-leader-dot { transition: transform .4s cubic-bezier(.3, 1.6, .5, 1) 1.65s; }
-.js .system:not(.is-built) .roof-count { opacity: 0; transform: translateY(8px); }
-.js .system:not(.is-built) .rf-leader { stroke-dashoffset: -116; }
+.js .system:not(.is-built) .roof-count { opacity: 0; }
+.js .system:not(.is-built) .roof-count::after { transform: translateX(50%) scaleY(0); }
 .js .system:not(.is-built) .rf-leader-dot { transform: scale(0); }
 
 /* assinatura da solução, apoiada no trecho de parede */
@@ -1699,7 +1713,7 @@ html:not(.js) .life-bar { display: none; }
   .life-fig, .js .life-panel { transform: none; }
   /* sistema: tudo já montado, sem instalação nem contagem */
   .system.is-built .rf-pv, .system.is-built .rf-glint, .kwp-num.is-tick { animation: none; }
-  .system-flow::after, .kwp-from, .kwp-from > span, .kwp-gauge, .roof-count, .rf-leader, .rf-leader-dot, .roof-sign, .roof-sign::before { transition: none; }
+  .system-flow::after, .kwp-from, .kwp-from > span, .kwp-gauge, .roof-count, .roof-count::after, .rf-leader-dot, .roof-sign, .roof-sign::before { transition: none; }
 }
 
 /* ---------- tablet ---------- */
